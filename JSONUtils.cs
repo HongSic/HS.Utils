@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Numerics;
 using System.Text;
 
@@ -149,6 +151,24 @@ namespace HS.Utils
             }
             if (Bracket) sb.Append("}");
             return sb.ToString();
+        }
+        #endregion
+
+        #region ToJSONSerialize (Newtonsoft.JSON 라이브러리 필요)
+        public static string ToSerializeJSON(this object Instance)
+        {
+            using (var ms = new MemoryStream())
+            using (var sr = new StreamReader(ToSerializeJSONStream(Instance, ms)))
+            {
+                ms.Position = 0;
+                return sr.ReadToEnd();
+            }
+        }
+        public static Stream ToSerializeJSONStream(this object Instance, Stream OutputStream)
+        {
+            using (StreamWriter sw = new StreamWriter(OutputStream))
+                JsonSerializer.CreateDefault().Serialize(sw, Instance);
+            return OutputStream;
         }
         #endregion
     }

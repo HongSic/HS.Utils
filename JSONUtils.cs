@@ -164,10 +164,14 @@ namespace HS.Utils
                 return sr.ReadToEnd();
             }
         }
-        public static Stream ToSerializeJSONStream(this object Instance, Stream OutputStream)
+        public static Stream ToSerializeJSONStream(this object Instance, Stream OutputStream, bool Minify = false)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream))
-                JsonSerializer.CreateDefault().Serialize(sw, Instance);
+            {
+                var json = JsonSerializer.CreateDefault();
+                json.Formatting = Minify ? Formatting.None : Formatting.Indented;
+                json.Serialize(sw, Instance);
+            }
             return OutputStream;
         }
         #endregion

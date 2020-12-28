@@ -39,6 +39,11 @@ namespace HS.Utils
             return new string(stringChars);
         }
 
+        #region URI Utils
+        public static string ToAbsolutePath(this Uri URL, string RelativeLink) { return new Uri(URL, RelativeLink).AbsoluteUri; }
+        public static string ToAbsolutePath(this string URLRoot, string RelativeLink) { return ToAbsolutePath(new Uri(URLRoot), RelativeLink); }
+        #endregion
+
         #region IO String Utils
         /// <summary>
         /// 현재 실행 파일이 있는 디렉터리 가져오기
@@ -171,7 +176,7 @@ namespace HS.Utils
         }
 #endregion
 
-#region DateTime Utils
+        #region DateTime Utils
         /// <summary>
         /// DateTime 형식을 ISO8601 포맷에 맞게 반환합니다
         /// </summary>
@@ -238,9 +243,76 @@ namespace HS.Utils
             int index = LastIndexOf ? Text.LastIndexOf(Search) : Text.IndexOf(Search);
             return index < 0 ? null : Text.Remove(index);
         }
-#endregion
+        #endregion
 
-#region .Net 4.0 Under
+        #region Between
+        /// <summary>
+        /// 시작 문자열와 끝 문자열 사이의 문자열를 가져옵니다
+        /// </summary>
+        /// <param name="Text">원본 문자열 입니다</param>
+        /// <param name="Start">시작 문자열 입니다</param>
+        /// <param name="End">끝 문자열 입니다</param>
+        /// <param name="EndNotFoundEmpty">True 면 끝 문자를 찾을 수 없을 때 null 반환을, False 면 시작점 부터 문자열 끝까지 가져옵니다</param>
+        /// <param name="StartLastIndexOf">True 면 끝에서부터 False 면 처음부터 검색합니다</param>
+        /// <param name="EndLastIndexOf">True 면 끝에서부터 False 면 찾은 위치부터 검색합니다</param>
+        /// <returns>  </returns>
+        public static string Between(this string Text, string Start, string End, bool EndNotFoundEmpty, bool StartLastIndexOf = false, bool EndLastIndexOf = true)
+        {
+            if (string.IsNullOrEmpty(Text)) return null;
+            else
+            {
+                int index1 = StartLastIndexOf ? Text.LastIndexOf(Start) : Text.IndexOf(Start);
+                if (index1 < 0) return null;
+                else index1 += Start.Length;
+
+                int index2 = EndLastIndexOf ? Text.LastIndexOf(End) : Text.IndexOf(End, index1);
+                if (index2 < 0) return EndNotFoundEmpty ? null : Text.Substring(index1);
+                else return Text.Substring(index1, index2 - index1);
+            }
+        }
+        /// <summary>
+        /// 시작 문자와 끝 문자 사이의 문자열를 가져옵니다
+        /// </summary>
+        /// <param name="Text">원본 문자 입니다</param>
+        /// <param name="Start">시작 문자 입니다</param>
+        /// <param name="End">끝 문자열 입니다</param>
+        /// <param name="EndNotFoundEmpty">True 면 끝 문자를 찾을 수 없을 때 null 반환을, False 면 시작점 부터 문자열 끝까지 가져옵니다</param>
+        /// <param name="StartLastIndexOf">시작문자열을 True 면 끝에서부터 False 면 처음부터 검색합니다</param>
+        /// <param name="EndLastIndexOf">True 면 끝에서부터 False 면 찾은 위치부터 검색합니다</param>
+        /// <returns></returns>
+        public static string Between(this string Text, char Start, char End, bool EndNotFoundEmpty, bool StartLastIndexOf = false, bool EndLastIndexOf = false)
+        {
+            if (string.IsNullOrEmpty(Text)) return null;
+            else
+            {
+                int index1 = StartLastIndexOf ? Text.LastIndexOf(Start) : Text.IndexOf(Start);
+                if (index1 < 0) return null;
+                else index1++;
+
+                int index2 = EndLastIndexOf ? Text.LastIndexOf(End) : Text.IndexOf(End, index1);
+                if (index2 < 0) return EndNotFoundEmpty ? null : Text.Substring(index1);
+                else return Text.Substring(index1, index2 - index1);
+            }
+        }
+        #endregion
+
+        public static ulong ExtractNumber(this string Text)
+        {
+            ulong val = 0;
+            for (int i = 0; i < Text.Length; i++)
+            {
+                char c = Text[i];
+                if (c >= '0' && c <= '9')
+                {
+                    val *= 10;
+                    //(ASCII code reference)
+                    val += (ulong)(c - 48);
+                }
+            }
+            return val;
+        }
+
+        #region .Net 4.0 Under
         /// <summary>
         /// 문자열이 공백 또는 비었는지의 결과를 판단합니다
         /// </summary>
@@ -254,7 +326,7 @@ namespace HS.Utils
             return string.IsNullOrWhiteSpace(Text);
 #endif
         }
-#endregion
+        #endregion
 
         /// <summary>
         /// 

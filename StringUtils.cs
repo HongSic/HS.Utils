@@ -40,8 +40,20 @@ namespace HS.Utils
         }
 
         #region URI Utils
+        /// <summary>
+        /// 부모 주소와 하위 경로를 합쳐 최종 주소를 만들어줍니다
+        /// </summary>
+        /// <param name="URL">부모 URL 입니다</param>
+        /// <param name="RelativeLink">하위 경로 입니다</param>
+        /// <returns></returns>
         public static string ToAbsolutePath(this Uri URL, string RelativeLink) { return new Uri(URL, RelativeLink).AbsoluteUri; }
-        public static string ToAbsolutePath(this string URLRoot, string RelativeLink) { return ToAbsolutePath(new Uri(URLRoot), RelativeLink); }
+        /// <summary>
+        /// 부모 주소와 하위 경로를 합쳐 최종 주소를 만들어줍니다
+        /// </summary>
+        /// <param name="URL">부모 URL 입니다</param>
+        /// <param name="RelativeLink">하위 경로 입니다</param>
+        /// <returns></returns>
+        public static string ToAbsolutePath(this string URL, string RelativeLink) { return ToAbsolutePath(new Uri(URL), RelativeLink); }
         #endregion
 
         #region IO String Utils
@@ -223,25 +235,26 @@ namespace HS.Utils
         /// <param name="Text">원본 문자열 입니다</param>
         /// <param name="Search">검색할 문자 입니다</param>
         /// <param name="LastIndexOf">True 면 끝에서부터 False 면 처음부터 검색합니다</param>
+        /// <param name="NotFoundNull">문자열을 찾을 수 없을때 True 면 null 을 False 면 원본 문자열을 반환합니다</param>
         /// <returns></returns>
-        public static string RemoveOf(this string Text, char Search, bool LastIndexOf)
+        public static string RemoveOf(this string Text, char Search, bool LastIndexOf, bool NotFoundNull = true)
         {
             if (Text == null) return null;
             int index = LastIndexOf ? Text.LastIndexOf(Search) : Text.IndexOf(Search);
-            return index < 0 ? null : Text.Remove(index);
+            return index < 0 ? (NotFoundNull ? null : Text) : Text.Remove(index);
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="Text">원본 문자열 입니다</param>
         /// <param name="Search">검색할 문자열 입니다</param>
-        /// <param name="LastIndexOf">True 면 끝에서부터 False 면 처음부터 검색합니다</param>
+        /// <param name="NotFoundNull">문자를 찾을 수 없을때 True 면 null 을 False 면 원본 문자를 반환합니다</param>
         /// <returns></returns>
-        public static string RemoveOf(this string Text, string Search, bool LastIndexOf)
+        public static string RemoveOf(this string Text, string Search, bool LastIndexOf, bool NotFoundNull = true)
         {
             if (string.IsNullOrEmpty(Text)) return null;
             int index = LastIndexOf ? Text.LastIndexOf(Search) : Text.IndexOf(Search);
-            return index < 0 ? null : Text.Remove(index);
+            return index < 0 ? (NotFoundNull ? null : Text) : Text.Remove(index);
         }
         #endregion
 

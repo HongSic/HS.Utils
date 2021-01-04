@@ -279,6 +279,7 @@ namespace HS.Utils
                 else index1 += Start.Length;
 
                 int index2 = EndLastIndexOf ? Text.LastIndexOf(End) : Text.IndexOf(End, index1);
+                if (index2 < index1) index2 = -1;
                 if (index2 < 0) return EndNotFoundEmpty ? null : Text.Substring(index1);
                 else return Text.Substring(index1, index2 - index1);
             }
@@ -303,6 +304,7 @@ namespace HS.Utils
                 else index1++;
 
                 int index2 = EndLastIndexOf ? Text.LastIndexOf(End) : Text.IndexOf(End, index1);
+                if (index2 < index1) index2 = -1;
                 if (index2 < 0) return EndNotFoundEmpty ? null : Text.Substring(index1);
                 else return Text.Substring(index1, index2 - index1);
             }

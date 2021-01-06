@@ -227,7 +227,7 @@ namespace HS.Utils
         {
             if (string.IsNullOrEmpty(Text)) return null;
             int index = LastIndexOf ? Text.LastIndexOf(Search) : Text.IndexOf(Search);
-            return index < 0 ? null : Text.Substring(index + 1);
+            return index < 0 ? null : Text.Substring(index + Search.Length);
         }
         /// <summary>
         /// 

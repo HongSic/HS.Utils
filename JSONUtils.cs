@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -155,22 +156,69 @@ namespace HS.Utils
         #endregion
 
         #region ToJSONSerialize (Newtonsoft.JSON 라이브러리 필요)
-        public static string ToSerializeJSON(this object Instance)
+        public static JsonSerializerSettings DefaultJsonSerializerSetting = new JsonSerializerSettings()
         {
-            using (var ms = new MemoryStream())
-            using (var sr = new StreamReader(ToSerializeJSONStream(Instance, ms)))
+            NullValueHandling = NullValueHandling.Include,
+            Formatting = Formatting.Indented,
+        };
+        public class SerializeJSON
+        {
+            public SerializeJSON(object Value, string Name = null) { this.Name = Name; this.Value = Value; }
+            public string Name;
+            public object Value;
+        }
+        private class StreamReaderTemp : MemoryStream
+        {
+            public bool LOCK_DISPOSE = false;
+            protected override void Dispose(bool disposing) { if (LOCK_DISPOSE) base.Dispose(disposing); }
+            public override void Close() { if (LOCK_DISPOSE) base.Close(); }
+        }
+
+        public static string ToSerializeJSON1(this object Instance, JsonSerializerSettings JSONSetting = null)
+        {
+            using (var ms = new StreamReaderTemp())
+            using (var sr = new StreamReader(ToSerializeJSONStream1(Instance, ms, JSONSetting)))
+            {
+                ms.Position = 0;
+                try { return sr.ReadToEnd(); }
+                finally { ms.LOCK_DISPOSE = true; ms.Close(); }
+            }
+        }
+
+        public static string ToSerializeJSON1(this IEnumerable<SerializeJSON> Instance, JsonSerializerSettings JSONSetting = null)
+        {
+            using (var ms = new StreamReaderTemp())
+            using (var sr = new StreamReader(ToSerializeJSONStream1(Instance, ms, JSONSetting)))
             {
                 ms.Position = 0;
                 return sr.ReadToEnd();
             }
         }
-        public static Stream ToSerializeJSONStream(this object Instance, Stream OutputStream, bool Minify = false)
+        public static Stream ToSerializeJSONStream1(this object Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream))
             {
-                var json = JsonSerializer.CreateDefault();
-                json.Formatting = Minify ? Formatting.None : Formatting.Indented;
+                var json = JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
+                //json.Formatting = Minify ? Formatting.None : Formatting.Indented;
                 json.Serialize(sw, Instance);
+            }
+            return OutputStream;
+        }
+
+        public static Stream ToSerializeJSONStream1(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null)
+        {
+            using (StreamWriter sw = new StreamWriter(OutputStream))
+            {
+                var json = JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
+                JObject obj = new JObject();
+                foreach(var ins in Instance)
+                {
+                    if(ins != null)
+                    {
+                        if (ins.Name == null) obj.Add(JObject.FromObject(ins.Value));
+                        else obj.Add(new JProperty(ins.Name, JObject.FromObject(ins.Value)));
+                    }
+                }
             }
             return OutputStream;
         }

@@ -54,6 +54,24 @@ namespace HS.Utils
         /// <param name="RelativeLink">하위 경로 입니다</param>
         /// <returns></returns>
         public static string ToAbsolutePath(this string URL, string RelativeLink) { return ToAbsolutePath(new Uri(URL), RelativeLink); }
+
+        //https://rextester.com/AKMG13869
+        //이 함수 현재 속도 1(4n) 을 1(n) 로 낮출 필요 있음
+        /// <summary>
+        ///  HTML 중 특수문자 (&amp; &nbsp; 등)을 필터링 합니다
+        /// </summary>
+        /// <param name="HTML">HTML 문자열 입니다</param>
+        /// <returns></returns>
+        public static string FilterHTMLTag(this string HTML)
+        {
+            string[] OldWords = { "&nbsp;", "&amp;", "&quot;", "&lt;", "&gt;" };
+            string[] NewWords = { " ", "&", "\"", "<", ">" };
+            //string[] OldWords = { "&nbsp;", "&amp;", "&quot;", "&lt;", "&gt;", "&reg;", "&copy;", "&bull;", "&trade;" };
+            //string[] NewWords = { " ", "&", "\"", "<", ">", "Â®", "Â©", "â€¢", "â„¢" };
+            for (int i = 0; i < OldWords.Length; i++)
+                HTML = HTML.Replace(OldWords[i], NewWords[i]);
+            return HTML;
+        }
         #endregion
 
         #region IO String Utils
@@ -260,26 +278,37 @@ namespace HS.Utils
 
         #region Between
         /// <summary>
-        /// 시작 문자열와 끝 문자열 사이의 문자열를 가져옵니다
+        /// 시작 문자열와 끝 문자열 사이의 문자열를 가져옵니다 
+        /// 민약 StartLastIndexOf 와 EndLastIndexOf 가 모두 True면 
         /// </summary>
         /// <param name="Text">원본 문자열 입니다</param>
         /// <param name="Start">시작 문자열 입니다</param>
         /// <param name="End">끝 문자열 입니다</param>
         /// <param name="EndNotFoundEmpty">True 면 끝 문자를 찾을 수 없을 때 null 반환을, False 면 시작점 부터 문자열 끝까지 가져옵니다</param>
-        /// <param name="StartLastIndexOf">True 면 끝에서부터 False 면 처음부터 검색합니다</param>
-        /// <param name="EndLastIndexOf">True 면 끝에서부터 False 면 찾은 위치부터 검색합니다</param>
+        /// <param name="LastIndexOf">True 면 끝에서부터 False 면 처음부터 검색합니다</param>
+        /// <param name="Direction">끝방향의 검색 방향을 지정합니다</param>
         /// <returns>  </returns>
-        public static string Between(this string Text, string Start, string End, bool EndNotFoundEmpty, bool StartLastIndexOf = false, bool EndLastIndexOf = true)
+        public static string Between(this string Text, string Start, string End, bool EndNotFoundEmpty, bool LastIndexOf = false, EndDirection Direction = EndDirection.StartIndexOf)
         {
             if (string.IsNullOrEmpty(Text)) return null;
             else
             {
-                int index1 = StartLastIndexOf ? Text.LastIndexOf(Start) : Text.IndexOf(Start);
+                int index1 = LastIndexOf ? Text.LastIndexOf(Start) : Text.IndexOf(Start);
                 if (index1 < 0) return null;
                 else index1 += Start.Length;
 
-                int index2 = EndLastIndexOf ? Text.LastIndexOf(End) : Text.IndexOf(End, index1);
-                if (index2 < index1) index2 = -1;
+                int index2;
+                if (Direction == EndDirection.StartLastIndexOf) index2 = index1 > 1 ? Text.Remove(index1 - 1).LastIndexOf(End) : -1;
+                else if (Direction == EndDirection.TextLastIndexOf) index2 = Text.LastIndexOf(End);
+                else if (Direction == EndDirection.TextIndexOf) index2 = Text.IndexOf(End);
+                else index2 = Text.IndexOf(End, index1);
+
+
+                if (index2 < index1)
+                {
+                    if (Direction == EndDirection.StartLastIndexOf) { index2++; return Text.Substring(index2, index1 - (index2 + 1)); }
+                    else index2 = -1;
+                }
                 if (index2 < 0) return EndNotFoundEmpty ? null : Text.Substring(index1);
                 else return Text.Substring(index1, index2 - index1);
             }
@@ -291,23 +320,60 @@ namespace HS.Utils
         /// <param name="Start">시작 문자 입니다</param>
         /// <param name="End">끝 문자열 입니다</param>
         /// <param name="EndNotFoundEmpty">True 면 끝 문자를 찾을 수 없을 때 null 반환을, False 면 시작점 부터 문자열 끝까지 가져옵니다</param>
-        /// <param name="StartLastIndexOf">시작문자열을 True 면 끝에서부터 False 면 처음부터 검색합니다</param>
-        /// <param name="EndLastIndexOf">True 면 끝에서부터 False 면 찾은 위치부터 검색합니다</param>
+        /// <param name="LastIndexOf">시작문자열을 True 면 끝에서부터 False 면 처음부터 검색합니다</param>
+        /// <param name="Direction">끝방향의 검색 방향을 지정합니다</param>
         /// <returns></returns>
-        public static string Between(this string Text, char Start, char End, bool EndNotFoundEmpty, bool StartLastIndexOf = false, bool EndLastIndexOf = false)
+        public static string Between(this string Text, char Start, char End, bool EndNotFoundEmpty, bool LastIndexOf = false, EndDirection Direction = EndDirection.StartIndexOf)
         {
             if (string.IsNullOrEmpty(Text)) return null;
             else
             {
-                int index1 = StartLastIndexOf ? Text.LastIndexOf(Start) : Text.IndexOf(Start);
+                int index1 = LastIndexOf ? Text.LastIndexOf(Start) : Text.IndexOf(Start);
                 if (index1 < 0) return null;
                 else index1++;
 
-                int index2 = EndLastIndexOf ? Text.LastIndexOf(End) : Text.IndexOf(End, index1);
-                if (index2 < index1) index2 = -1;
+                int index2 = -1;
+                if (Direction == EndDirection.StartLastIndexOf)
+                {
+                    if (index1 > 1)
+                        for (int i = index1 - 2; i >= 0; i--)
+                            if (Text[i] == End) { index2 = i; break; }
+                }
+                else if (Direction == EndDirection.TextLastIndexOf) index2 = Text.LastIndexOf(End);
+                else if (Direction == EndDirection.TextIndexOf) index2 = Text.IndexOf(End);
+                else index2 = Text.IndexOf(End);
+
+                if (index2 < index1)
+                {
+                    if (Direction == EndDirection.StartLastIndexOf) { index2++; return Text.Substring(index2, index1 - (index2 + 1)); }
+                    else index2 = -1;
+                }
                 if (index2 < 0) return EndNotFoundEmpty ? null : Text.Substring(index1);
                 else return Text.Substring(index1, index2 - index1);
             }
+        }
+
+        /// <summary>
+        /// 끝방향의 검색 방향입니다
+        /// </summary>
+        public enum EndDirection
+        {
+            /// <summary>
+            /// 찾은 지점부터 순차적으로 검색합니다
+            /// </summary>
+            StartIndexOf,
+            /// <summary>
+            /// 찾은 지점부터 역방향으로 검색합니다
+            /// </summary>
+            StartLastIndexOf,
+            /// <summary>
+            /// 텍스트의 끝에서부터 검색합니다
+            /// </summary>
+            TextLastIndexOf,
+            /// <summary>
+            /// 텍스트의 처음부터 검색합니다
+            /// </summary>
+            TextIndexOf,
         }
         #endregion
 

@@ -84,9 +84,7 @@ namespace HS.Utils
             //string path = Process.GetCurrentProcess().Modules[1].FileName;
             //string path = Process.GetCurrentProcess().StartInfo.WorkingDirectory;
             string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                return path.Remove(path.LastIndexOf("\\"));
-            else return path.Remove(path.LastIndexOf("/"));
+            return Path.GetDirectoryName(path);
         }
 
         /// <summary>

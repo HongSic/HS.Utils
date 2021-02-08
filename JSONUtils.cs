@@ -155,7 +155,7 @@ namespace HS.Utils
         }
         #endregion
 
-        #region ToJSONSerialize (Newtonsoft.JSON 라이브러리 필요)
+        #region ToJSONSerialize1 (Newtonsoft.JSON 라이브러리 필요)
         public static JsonSerializerSettings DefaultJsonSerializerSetting = new JsonSerializerSettings()
         {
             NullValueHandling = NullValueHandling.Include,
@@ -194,9 +194,10 @@ namespace HS.Utils
                 return sr.ReadToEnd();
             }
         }
-        public static Stream ToSerializeJSONStream1(this object Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null)
+        public static Stream ToSerializeJSONStream1(this object Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream1(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
+        public static Stream ToSerializeJSONStream1(this object Instance, Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
-            using (StreamWriter sw = new StreamWriter(OutputStream))
+            using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {
                 var json = JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
                 //json.Formatting = Minify ? Formatting.None : Formatting.Indented;
@@ -205,9 +206,10 @@ namespace HS.Utils
             return OutputStream;
         }
 
-        public static Stream ToSerializeJSONStream1(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null)
+        public static Stream ToSerializeJSONStream1(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream1(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
+        public static Stream ToSerializeJSONStream1(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
-            using (StreamWriter sw = new StreamWriter(OutputStream))
+            using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {
                 var json = JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
                 JObject obj = new JObject();
@@ -223,5 +225,12 @@ namespace HS.Utils
             return OutputStream;
         }
         #endregion
+
+        /// <summary>
+        /// JSON 문자열으로부터 설정 불러오기
+        /// </summary>
+        /// <param name="JSONString">설정 JSON 문자열</param>
+        /// <returns></returns>
+        public static T FromJSON<T>(string JSONString) => JsonConvert.DeserializeObject<T>(JSONString);
     }
 }

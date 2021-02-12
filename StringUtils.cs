@@ -277,7 +277,7 @@ namespace HS.Utils
         #region Between
         /// <summary>
         /// 시작 문자열와 끝 문자열 사이의 문자열를 가져옵니다 
-        /// 민약 StartLastIndexOf 와 EndLastIndexOf 가 모두 True면 
+        /// 만약 StartLastIndexOf 와 EndLastIndexOf 가 모두 True면 
         /// </summary>
         /// <param name="Text">원본 문자열 입니다</param>
         /// <param name="Start">시작 문자열 입니다</param>

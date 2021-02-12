@@ -231,6 +231,6 @@ namespace HS.Utils
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static T FromJSON<T>(string JSONString) => JsonConvert.DeserializeObject<T>(JSONString);
+        public static T DeserializeJSON<T>(string JSONString) => JsonConvert.DeserializeObject<T>(JSONString);
     }
 }

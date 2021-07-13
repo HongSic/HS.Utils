@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace HS.Utils
 {
@@ -9,17 +10,33 @@ namespace HS.Utils
         public LanguageManager() { }
         public LanguageManager(string[] Language)
         {
-            for (int i = 0; i < Language.Length; i++)
+            for (int i = 0; i < Language.Length; i++) Add(Language[i]);
+        }
+        public LanguageManager(StreamReader Reader)
+        {
+            string line;
+            while ((line = Reader.ReadLine()) != null) Add(line);
+        }
+        public LanguageManager(IEnumerable<string> Language)
+        {
+            foreach(string line in Language) Add(line);
+        }
+        public LanguageManager(IEnumerator<string> Language)
+        {
+            do { Add(Language.Current); }
+            while (Language.MoveNext());
+        }
+
+        private void Add(string Line)
+        {
+            if (!string.IsNullOrEmpty(Line) &&
+                (Line[0] >= 'A' && Line[0] <= 'Z'))
             {
-                if (!string.IsNullOrEmpty(Language[i]) &&
-                    (Language[i][0] >= 'A' && Language[i][0] <= 'Z'))
+                int index = Line.IndexOf('=');
+                if (index > 0)
                 {
-                    int index = Language[i].IndexOf('=');
-                    if (index > 0)
-                    {
-                        string key = Language[i].Remove(index);
-                        if (!Exist(key)) lng.Add(key, Language[i].Substring(index + 1).Replace("\\n", "\n"));
-                    }
+                    string key = Line.Remove(index);
+                    if (!Exist(key)) lng.Add(key, Line.Substring(index + 1).Replace("\\n", "\n").Replace("\\r", "\r").Replace("\\t", "\t"));
                 }
             }
         }
@@ -30,9 +47,17 @@ namespace HS.Utils
         public LanguageManager Add(string Key, string Value) { if (!Exist(Key)) lng.Add(Key, Value); return this; }
         public int Count { get { return lng.Count; } }
 
+        private bool isDisposed;
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
             lng.Clear();
+            if (isDisposed) return;
+            isDisposed = true;
         }
 
         /// <summary>
@@ -66,5 +91,6 @@ namespace HS.Utils
             }
             return Original;
         }
+        ~LanguageManager() { Dispose(false); }
     }
 }

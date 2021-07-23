@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Text;
+
+namespace HS.Utils.Web
+{
+    public class HttpKeyValue : NameValueCollection
+    {
+        NameValueCollection Params;
+        public HttpKeyValue() { this.Params = new NameValueCollection(); }
+        public HttpKeyValue(NameValueCollection ParamMerge) { this.Params = ParamMerge; }
+        public HttpKeyValue(string Key, string Value) { Params = new NameValueCollection(); Add(Key, Value); }
+#if NETSTANDARD2_0_OR_GREATER && (!NET20 && !NET30 && !NET35 && !NET40)
+        public HttpKeyValue(IReadOnlyDictionary<string, string> Params)
+        {
+            this.Params = new NameValueCollection(Params.Count);
+            foreach (var pair in Params) this.Params.Add(pair.Key, pair.Value);
+        }
+#endif
+        public HttpKeyValue(IDictionary<string, string> Params)
+        {
+            this.Params = new NameValueCollection(Params.Count);
+            foreach (var pair in Params) this.Params.Add(pair.Key, pair.Value);
+        }
+
+        public ICollection<string> Values { get { return Params.Values; } }
+
+        public void Add(KeyValuePair<string, string> item)
+        {
+            //가비지 최소화
+            if (ContainsKey(item.Key)) Params[item.Key] = item.Value;
+            else Params.Add(item.Key, item.Value);
+        }
+
+        public void Clear() { Params.Clear(); }
+
+        public bool Contains(KeyValuePair<string, string> item) { return Params.Contains(item); }
+
+        public bool ContainsKey(string key) { return Params.ContainsKey(key); }
+
+        public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) { Params.CopyTo(array, arrayIndex); }
+
+        public IEnumerator<KeyValuePair<string, string>> GetEnumerator() { return Params.GetEnumerator(); }
+
+        public bool Remove(string key) { return Params.Remove(key); }
+        public bool Remove(KeyValuePair<string, string> item) { return Params.Remove(item); }
+
+        public bool TryGetValue(string key, out string value) { return Params.TryGetValue(key, out value); }
+
+        IEnumerator IEnumerable.GetEnumerator() { return Params.GetEnumerator(); }
+
+        public void Merge(NameValueCollection Collection) { foreach (var pair in this) Collection.Add(pair.Key, pair.Value); }
+        public void Merge(IDictionary<string, string> Dictionary)
+        {
+            foreach (var pair in this) collection.Add(pair.Key, pair.Value);
+            return collection;
+        }
+
+        public override string ToString() { return ToString(false); }
+        public string ToString(bool EscapeEncoding)
+        {
+            var sb = new StringBuilder();
+            bool First = true;
+            foreach (var param in this)
+            {
+                if (First) First = false;
+                else sb.Append('&');
+                sb.Append(param.Key).Append('=').Append(EscapeEncoding ? Uri.EscapeDataString(param.Value) : param.Value);
+            }
+            return sb.ToString();
+        }
+
+        public static explicit operator Dictionary<string, string>(KeyValue Param) { return Param == null ? null : new Dictionary<string, string>(Param); }
+        public static explicit operator HttpKeyValue(KeyValue Param)
+        {
+            if (Param == null) return null;
+            return new HttpKeyValue(Param);
+        }
+    }
+}

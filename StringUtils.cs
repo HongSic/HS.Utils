@@ -56,8 +56,8 @@ namespace HS.Utils
 
                 for(int i = 0; i < Array.Length; i++)
                 {
-                    if (First) { First = false; sb.Append(Separater); }
-                    else { sb.Append(Separater); sb.Append(Array[i]); }
+                    if (First) { First = false; sb.Append(Array[i]); }
+                    else { sb.Append(Separater).Append(Array[i]); }
                 }
 
                 return sb.ToString();

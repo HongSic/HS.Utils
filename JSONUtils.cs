@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HS.Utils
 {
@@ -244,5 +245,11 @@ namespace HS.Utils
             using (var jsonTextReader = new JsonTextReader(sr))
                 return serializer.Deserialize<T>(jsonTextReader);
         }
+        /// <summary>
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다)
+        /// </summary>
+        /// <param name="JSONString">설정 JSON 문자열</param>
+        /// <returns></returns>
+        public static async Task<T> DeserializeJSONAsync<T>(Stream JSONStream) => await Task.Run(() => DeserializeJSON<T>(JSONStream));
     }
 }

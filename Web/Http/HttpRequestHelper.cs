@@ -108,18 +108,22 @@ namespace HS.Utils.Web.Http
             catch (WebException ex)
             {
                 var response = (HttpWebResponse)ex.Response;
-                if (response.StatusCode == HttpStatusCode.Redirect ||
-                    response.StatusCode == HttpStatusCode.Moved ||
-                    response.StatusCode == HttpStatusCode.MovedPermanently)
+                if (response != null)
                 {
-                    if (Depth > 0)
+                    if (response.StatusCode == HttpStatusCode.Redirect ||
+                        response.StatusCode == HttpStatusCode.Moved ||
+                        response.StatusCode == HttpStatusCode.MovedPermanently)
                     {
-                        Uri url = new Uri(Request.RequestUri, response.Headers["Location"]);
-                        var request = Request.Clone(url, Data);
-                        response = await SendRestfulAsyncTask(request, Data, Depth--);
+                        if (Depth > 0)
+                        {
+                            Uri url = new Uri(Request.RequestUri, response.Headers["Location"]);
+                            var request = Request.Clone(url, Data);
+                            response = await SendRestfulAsyncTask(request, Data, Depth--);
+                        }
                     }
+                    else throw new HttpException(ex, response);
                 }
-                else throw new HttpException(ex, response);
+                else throw ex;
 
                 return response;
             }

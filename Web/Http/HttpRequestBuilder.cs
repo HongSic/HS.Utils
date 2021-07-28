@@ -78,7 +78,7 @@ namespace HS.Utils.Web.Http
                 //Request.Credentials = CredentialCache.DefaultCredentials;
             }
 
-            Request.SetParam(Data);
+            if(Data != null) Request.SetParam(Data);
             return Request;
         }
         #endregion

@@ -20,6 +20,16 @@ namespace HS.Utils.Web.Http
         public static async Task<string> GetStringAsync(this HttpWebResponse Response, Encoding Encoding, bool Close = true) { return await Response.GetResponseStream().GetStringAsync(Encoding, Close); }
 
         public static async Task<byte[]> GetDataAsync(this HttpWebResponse Response, bool Close = true) { return await Response.GetResponseStream().GetDataAsync(Close); }
+        
+
+        public static T GetInstance<T>(this HttpWebResponse Response)
+        {
+            using(Response) return JSONUtils.DeserializeJSON<T>(Response.GetResponseStream());
+        }
+        public static async Task<T> GetInstanceAsync<T>(this HttpWebResponse Response)
+        {
+            using(Response) return await JSONUtils.DeserializeJSONAsync<T>(Response.GetResponseStream()); 
+        }
 #endif
     }
 }

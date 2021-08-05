@@ -133,5 +133,6 @@ namespace HS.Utils.Web.Http
         public const string PUT = "PUT";
         public const string DELETE = "DELETE";
         public const string ADD = "ADD";
+        public const string PATCH = "PATCH";
     }
 }

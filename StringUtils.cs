@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace HS.Utils
 {
@@ -422,6 +423,10 @@ namespace HS.Utils
             /// </summary>
             TextIndexOf,
         }
+        #endregion
+
+        #region Check
+        public static bool CheckEmailAddress(this string Email) { return Regex.IsMatch(Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"); }
         #endregion
 
         //(StackOverflow 링크 추가)

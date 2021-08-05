@@ -232,13 +232,13 @@ namespace HS.Utils
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static T DeserializeJSON<T>(string JSONString) => JsonConvert.DeserializeObject<T>(JSONString);
+        public static T DeserializeJSON<T>(string JSONString, JsonSerializerSettings Settings = null) => JsonConvert.DeserializeObject<T>(JSONString, Settings);
         /// <summary>
         /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다)
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static T DeserializeJSON<T>(Stream JSONStream)
+        public static T DeserializeJSON<T>(this Stream JSONStream)
         {
             var serializer = new JsonSerializer();
             using (var sr = new StreamReader(JSONStream))

@@ -92,7 +92,7 @@ namespace HS.Utils
         #endregion
 
         #region Encrypt / Decrypt AES String
-        public static string EncryptToBase64AES(this string Text, string Password, string Salt = null) { return Convert.ToBase64String(EncryptStringAES(Text, Password, Salt)); }
+        public static string EncryptToBase64AES(this string Text, string Password, string Salt = null) { return Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.InsertLineBreaks); }
         public static byte[] EncryptStringAES(this string Text, string Password, string Salt = null)
         {
             // 입력받은 문자열을 바이트 배열로 변환

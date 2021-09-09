@@ -9,25 +9,45 @@ namespace HS.Utils.Web.Http
 {
     public class HttpKeyValue : NameValueCollection
     {
-        NameValueCollection Params;
-        public HttpKeyValue() { this.Params = new NameValueCollection(); }
-        public HttpKeyValue(NameValueCollection ParamMerge) { this.Params = ParamMerge; }
+        readonly NameValueCollection Params;
+        public HttpKeyValue() { Params = new NameValueCollection(); }
+        public HttpKeyValue(NameValueCollection Parent) { this.Params = Parent; }
         public HttpKeyValue(string Key, string Value) { Params = new NameValueCollection(); Add(Key, Value); }
 #if NETSTANDARD2_0_OR_GREATER && (!NET20 && !NET30 && !NET35 && !NET40)
         public HttpKeyValue(IReadOnlyDictionary<string, string> Params)
         {
             this.Params = new NameValueCollection(Params.Count);
-            foreach (var pair in Params) this.Params.Add(pair.Key, pair.Value);
+            foreach (var pair in Params) Add(pair.Key, pair.Value);
         }
 #endif
         public HttpKeyValue(IDictionary<string, string> Params)
         {
             this.Params = new NameValueCollection(Params.Count);
-            foreach (var pair in Params) this.Params.Add(pair.Key, pair.Value);
+            foreach (var pair in Params) Add(pair.Key, pair.Value);
         }
 
-        public HttpKeyValue Add(KeyValuePair<string, object> Item) { BaseAdd(Item.Key, Item.Value); return this; }
-        public HttpKeyValue Add(KeyValuePair<string, string> Item) { BaseAdd(Item.Key, Item.Value); return this; }
+        public new string this[int index]
+        {
+            get { return Params[index]; }
+        }
+
+
+        //public HttpKeyValue Add(KeyValuePair<string, object> Item) { base.Add(Item.Key, Item.Value); return this; }
+        public HttpKeyValue Add(KeyValuePair<string, string> Item) { Params.Add(Item.Key, Item.Value); return this; }
+
+        public override void Add(string name, string value) { Params.Add(name, value); }
+
+        public override int Count { get { return Params.Count; } }
+        public override string[] AllKeys { get { return Params.AllKeys; } }
+        public override void Clear() { Params.Clear(); }
+        public override string Get(int index) { return Params.Get(index); }
+        public override string Get(string name) { return Params.Get(name); }
+        public override KeysCollection Keys { get { return Params.Keys; } }
+        public override string GetKey(int index) { return Params.GetKey(index); }
+        public override string[] GetValues(int index) { return Params.GetValues(index); }
+        public override string[] GetValues(string name) { return Params.GetValues(name); }
+        public override void Remove(string name) { Params.Remove(name); }
+        public override void Set(string name, string value) { Params.Set(name, value); }
 
         public NameValueCollection Apply(NameValueCollection Collection)
         {

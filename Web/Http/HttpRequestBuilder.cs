@@ -29,13 +29,15 @@ namespace HS.Utils.Web.Http
             else return new Uri(URL);
         }
 
-        public static void SetParam(this Stream Stream, HttpKeyValue Params, bool Close = CLOSE)
+        public static void SetParam(this Stream Stream, HttpKeyValue Params, bool Close = CLOSE) { SetParam(Stream, Params, Encoding.UTF8, Close); }
+        public static void SetParam(this Stream Stream, HttpKeyValue Params, Encoding Encoding, bool Close = CLOSE)
         {
             if (Params != null && Params.Count > 0)
             {
+                StreamWriter writer = null;
                 try
                 {
-                    var writer = new StreamWriter(Stream);
+                    writer = new StreamWriter(Stream, Encoding);
 
                     bool First = true;
                     var keys = Params.AllKeys;
@@ -48,22 +50,29 @@ namespace HS.Utils.Web.Http
                         writer.Write('=');
                         writer.Write(Uri.EscapeDataString(Params[i]));
                     }
+
+                    writer.Flush();
                 }
-                finally { if (Close) Stream.Close(); }
+                finally { if (Close) writer?.Close(); }
             }
         }
-        public static HttpWebRequest SetParam(this HttpWebRequest Request, HttpKeyValue Params, bool Close = CLOSE)
+        public static HttpWebRequest SetParam(this HttpWebRequest Request, HttpKeyValue Params, bool Close = CLOSE) { return SetParam(Request, Params, Encoding.UTF8, Close); }
+        public static HttpWebRequest SetParam(this HttpWebRequest Request, HttpKeyValue Params, Encoding Encoding, bool Close = CLOSE)
         {
-            if (Params != null && Params.Count > 0)  SetParam(Request.GetRequestStream(), Params, Close);
+            if (Params != null && Params.Count > 0)  SetParam(Request.GetRequestStream(), Params, Encoding, Close);
             return Request;
         }
 
         #region Build
         public static HttpWebRequest Build(this Uri URL, string Method = HttpMethod.GET) { return Build(URL, Method, null, null, CookieCollectionEmpty); }
-        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data) { return Build(URL, Method, Data, null, CookieCollectionEmpty); }
-        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header) { return Build(URL, Method, Data, Header, CookieCollectionEmpty); }
-        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header, HttpKeyValue Cookie) {return Build(URL, Method, Data, Header, (CookieCollection)Cookie); }
-        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header, CookieCollection Cookie)
+        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data) { return Build(URL, Method, Data, Encoding.UTF8); }
+        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, Encoding Encoding) { return Build(URL, Method, Data, null, CookieCollectionEmpty, Encoding); }
+        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header) { return Build(URL, Method, Data, Header, Encoding.UTF8); }
+        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header, Encoding Encoding) { return Build(URL, Method, Data, Header, CookieCollectionEmpty, Encoding); }
+        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header, HttpKeyValue Cookie) {return Build(URL, Method, Data, Header, Cookie, Encoding.UTF8); }
+        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header, HttpKeyValue Cookie, Encoding Encoding) {return Build(URL, Method, Data, Header, (CookieCollection)Cookie, Encoding); }
+        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header, CookieCollection Cookie) { return Build(URL, Method, Data, Header, Cookie, Encoding.UTF8); }
+        public static HttpWebRequest Build(this Uri URL, string Method, HttpKeyValue Data, HttpKeyValue Header, CookieCollection Cookie, Encoding Encoding)
         {
             var Request = (HttpWebRequest)WebRequest.Create(URL);
             Request.PreAuthenticate = true;
@@ -71,14 +80,20 @@ namespace HS.Utils.Web.Http
             Request.AllowAutoRedirect = true;
             Request.ServicePoint.Expect100Continue = true;
             Request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            if (Header != null) Header.Apply(Request.Headers);
-            if (Cookie != null) Request.CookieContainer.Add(Cookie);
+            if (Cookie != null && Cookie.Count > 0) Request.CookieContainer.Add(Cookie);
             if (URL.Scheme.ToLower() == "https")
             {
                 //Request.Credentials = CredentialCache.DefaultCredentials;
             }
 
-            if(Data != null) Request.SetParam(Data);
+            if (Data != null)
+            {
+                Request.SetParam(Data, Encoding);
+                if (Header == null) Header = new HttpKeyValue();
+                Header.Set("Content-type", "application/x-www-form-urlencoded");
+            }
+
+            if (Header != null) Header.Apply(Request.Headers);
             return Request;
         }
         #endregion

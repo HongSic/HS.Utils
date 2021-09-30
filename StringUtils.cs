@@ -427,6 +427,7 @@ namespace HS.Utils
 
         #region Check
         public static bool CheckEmailAddress(this string Email) { return Regex.IsMatch(Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"); }
+        //xxx-xxxx-xxxx
         public static bool CheckPhoneNumber(this string Phone) { return Regex.IsMatch(Phone, @"^\d{3}-\d{3,4}-\d{4}$"); }
         #endregion
 

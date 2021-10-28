@@ -201,6 +201,7 @@ namespace HS.Utils
 #if VS2019 || VS2017
             int index = GetLastIndexOfPath(Path, out string dirchar);
 #else
+            string dirchar;
             int index = GetLastIndexOfPath(Path, out dirchar);
 #endif
 
@@ -236,7 +237,6 @@ namespace HS.Utils
 #if VS2019 || VS2017
         private static int GetLastIndexOfPath(string Path) { return GetLastIndexOfPath(Path, out _); }
 #else
-        string dirchar;
         private static int GetLastIndexOfPath(string Path) { string dirchar; return GetLastIndexOfPath(Path, out dirchar); }
 #endif
 

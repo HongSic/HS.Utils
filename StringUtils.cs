@@ -162,12 +162,12 @@ namespace HS.Utils
             return new string(array);
         }
         /// <summary>
-        /// 두 경로를 합쳐 올바른 경로로 만들어 줍니다
+        /// 두 경로를 합쳐 올바른 경로로 만들어 줍니다 (경로문자는 현재 OS 를 따라갑니다)
         /// </summary>
         /// <param name="A">경로 1</param>
         /// <param name="B">경로 2</param>
         /// <returns>두 경로가 합쳐진 경로 입니다</returns>
-        public static string PathMaker(string A, string B)
+        public static string PathMakerAuto(string A, string B)
         {
             char c = Environment.OSVersion.Platform == PlatformID.Win32NT ? '\\' : '/';
             return PathMaker(A, B, c);
@@ -179,7 +179,7 @@ namespace HS.Utils
         /// <param name="B">경로 2</param>
         /// <param name="PathChar">두 경로 사이에 붙을 경로 문자 입니다</param>
         /// <returns>두 경로가 합쳐진 경로 입니다</returns>
-        public static string PathMaker(string A, string B, char PathChar)
+        public static string PathMaker(string A, string B, char PathChar = '/')
         {
             if (IsNullOrWhiteSpace(A) || IsNullOrWhiteSpace(B)) return A + B;
             else if (Same(A[A.Length - 1]) && Same(B[0])) return A + B.Substring(1, B.Length - 1);

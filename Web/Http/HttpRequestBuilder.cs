@@ -132,7 +132,7 @@ namespace HS.Utils.Web.Http
                 var writer = Request.GetRequestStream();
                 try 
                 {
-                    Data.ToSerializeJSONStream1(writer);
+                    Data.ToSerializeJSONStream_NS(writer);
                     Request.ContentType = "application/json; charset=utf-8";
                 }
                 finally { if (Close) writer.Close(); }

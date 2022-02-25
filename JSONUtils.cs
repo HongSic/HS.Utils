@@ -175,10 +175,10 @@ namespace HS.Utils
             public override void Close() { if (LOCK_DISPOSE) base.Close(); }
         }
 
-        public static string ToSerializeJSON1(this object Instance, JsonSerializerSettings JSONSetting = null)
+        public static string ToSerializeJSON_NS(this object Instance, JsonSerializerSettings JSONSetting = null)
         {
             using (var ms = new StreamReaderTemp())
-            using (var sr = new StreamReader(ToSerializeJSONStream1(Instance, ms, JSONSetting)))
+            using (var sr = new StreamReader(ToSerializeJSONStream_NS(Instance, ms, JSONSetting)))
             {
                 ms.Position = 0;
                 try { return sr.ReadToEnd(); }
@@ -186,17 +186,17 @@ namespace HS.Utils
             }
         }
 
-        public static string ToSerializeJSON1(this IEnumerable<SerializeJSON> Instance, JsonSerializerSettings JSONSetting = null)
+        public static string ToSerializeJSON_NS(this IEnumerable<SerializeJSON> Instance, JsonSerializerSettings JSONSetting = null)
         {
             using (var ms = new StreamReaderTemp())
-            using (var sr = new StreamReader(ToSerializeJSONStream1(Instance, ms, JSONSetting)))
+            using (var sr = new StreamReader(ToSerializeJSONStream_NS(Instance, ms, JSONSetting)))
             {
                 ms.Position = 0;
                 return sr.ReadToEnd();
             }
         }
-        public static Stream ToSerializeJSONStream1(this object Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream1(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
-        public static Stream ToSerializeJSONStream1(this object Instance, Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
+        public static Stream ToSerializeJSONStream_NS(this object Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream_NS(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
+        public static Stream ToSerializeJSONStream_NS(this object Instance, Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {
@@ -207,8 +207,8 @@ namespace HS.Utils
             return OutputStream;
         }
 
-        public static Stream ToSerializeJSONStream1(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream1(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
-        public static Stream ToSerializeJSONStream1(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
+        public static Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream_NS(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
+        public static Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {

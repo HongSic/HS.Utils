@@ -146,8 +146,19 @@ namespace HS.Utils.Web.Http
         public const string GET = "GET";
         public const string POST = "POST";
         public const string PUT = "PUT";
-        public const string DELETE = "DELETE";
-        public const string ADD = "ADD";
         public const string PATCH = "PATCH";
+        public const string FETCH = "FETCH";
+        public const string DELETE = "DELETE";
+        public const string COPY = "COPY";
+        public const string HEAD = "HEAD";
+        public const string OPTIONS = "OPTIONS";
+        public const string LINK = "LINK";
+        public const string UNLINK = "UNLINK";
+        public const string LOCK = "LOCK";
+        public const string UNLOCK = "UNLOCK";
+        public const string FIND = "FIND";
+        public const string ADD = "ADD";
+        public const string LIST = "LIST";
+        public const string VIEW = "VIEW";
     }
 }

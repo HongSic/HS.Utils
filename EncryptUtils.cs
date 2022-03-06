@@ -149,7 +149,7 @@ namespace HS.Utils
             // 복호화 시작
             var data = DecryptDataAES(EncryptedData, Password, Salt);
             // 복호화된 데이터를 문자열로 바꾼다.
-            return Encoding.UTF8.GetString(data);
+            return data == null || data.Length == 0 ? null : Encoding.UTF8.GetString(data);
         }
         #endregion
         #endregion

@@ -129,7 +129,7 @@ namespace HS.Utils
         /// 현재 실행 파일이 있는 디렉터리 가져오기
         /// </summary>
         /// <returns></returns>
-        public static string GetExcutePath()
+        public static string GetExcuteDirectory()
         {
             //string path = Process.GetCurrentProcess().Modules[1].FileName;
             //string path = Process.GetCurrentProcess().StartInfo.WorkingDirectory;

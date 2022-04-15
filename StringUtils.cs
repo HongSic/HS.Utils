@@ -448,6 +448,14 @@ namespace HS.Utils
             return val;
         }
 
+        #region Hash
+        public static string HashMD5(this string Text, bool UpperCase, Encoding EncodingApply = null)
+        {
+            return Text == null ? null :
+                (EncodingApply == null ? Encoding.Default.GetBytes(Text) : EncodingApply.GetBytes(Text)).HashMD5(UpperCase);
+        }
+        #endregion
+
         #region .Net 4.0 Under
         /// <summary>
         /// 문자열이 공백 또는 비었는지의 결과를 판단합니다

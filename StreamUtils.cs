@@ -42,6 +42,23 @@ namespace HS.Utils
         }
 
 
+        public static string HashMD5(this Stream Stream, bool UpperCase)
+        {
+            // Use input string to calculate MD5 hash
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] hashBytes = md5.ComputeHash(Stream);
+                if (Stream.CanSeek) Stream.Position = 0;
+
+                StringBuilder sb = new StringBuilder();
+                //Convert the byte array to hexadecimal string
+                for (int i = 0; i < hashBytes.Length; i++)
+                    sb.Append(hashBytes[i].ToString(UpperCase ? "X2" : "x2"));
+                return sb.ToString();
+            }
+        }
+
+
 #if NETSTANDARD2_0_OR_GREATER && (!NET20 && !NET30 && !NET35 && !NET40)
         public static async Task<string> GetStringAsync(this Stream Stream, Encoding Encoding, bool Close = CLOSE)
         {

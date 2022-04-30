@@ -160,5 +160,6 @@ namespace HS.Utils.Web.Http
         public const string ADD = "ADD";
         public const string LIST = "LIST";
         public const string VIEW = "VIEW";
+        public const string COUNT = "COUNT";
     }
 }

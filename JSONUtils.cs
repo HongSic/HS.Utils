@@ -251,5 +251,18 @@ namespace HS.Utils
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
         public static async Task<T> DeserializeJSONAsync<T>(Stream JSONStream) => await Task.Run(() => DeserializeJSON<T>(JSONStream));
+
+        #region Etc
+        public static Dictionary<string, object> ToDictionaryFromProperties<T>(this T Instance) where T : class
+        {
+            var properties = Instance.GetType().GetProperties();
+
+            var dic = new Dictionary<string, object>(properties.Length);
+            for (int i = 0; i < properties.Length; i++)
+                dic.Add(properties[i].Name, properties[i].GetValue(Instance));
+
+            return dic;
+        }
+        #endregion
     }
 }

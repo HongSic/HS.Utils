@@ -1,10 +1,14 @@
-﻿using System;
+﻿using EasyReleaseCore.Struct;
+using System;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Xml.Serialization;
 
 namespace HS.Utils
 {
     public static class SerializerUtils
     {
+        #region Serializer
         /// <summary>
         /// 
         /// </summary>
@@ -28,7 +32,34 @@ namespace HS.Utils
 
             return arr;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static byte[] ToSerializeBytesXML(this object obj)
+        {
+            using (MemoryStream ms = ToSerializeBytesXMLStream(obj))
+                return ms.ToArray();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static MemoryStream ToSerializeBytesXMLStream(this object obj)
+        {
+            MemoryStream ms = new MemoryStream();
+            XmlSerializer xs = new XmlSerializer(typeof(PackageInfo));
+            xs.Serialize(ms, obj);
+            ms.Position = 0;
+            return ms;
+        }
+        #endregion
 
+
+        #region Deserializer
         /// <summary>
         /// 
         /// </summary>
@@ -37,21 +68,44 @@ namespace HS.Utils
         /// <param name="CheckLength"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static T DeserializeFromByte<T>(this byte[] buffer, bool CheckLength = true)
+        public static T DeserializeFromByte<T>(this byte[] data, bool CheckLength = true)
         {
             //구조체 사이즈 
             int size = Marshal.SizeOf(typeof(T));
 
-            if (CheckLength && size > buffer.Length)
+            if (CheckLength && size > data.Length)
             {
                 throw new Exception(string.Format("Buffer length must be same or bigger than T ({0}) size", typeof(T).Name));
             }
 
             IntPtr ptr = Marshal.AllocHGlobal(size);
-            Marshal.Copy(buffer, 0, ptr, size);
+            Marshal.Copy(data, 0, ptr, size);
             T obj = (T)Marshal.PtrToStructure(ptr, typeof(T));
             Marshal.FreeHGlobal(ptr);
             return obj;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public static T DeserializeFromByteXML<T>(this byte[] data)
+        {
+            using (var stream = new MemoryStream(data))
+                return DeserializeFromByteXML<T>(stream);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Data"></param>
+        /// <returns></returns>
+        public static T DeserializeFromByteXML<T>(Stream Data)
+        {
+            XmlSerializer xs = new XmlSerializer(typeof(PackageInfo));
+            return (T)xs.Deserialize(Data);
+        }
+        #endregion
     }
 }

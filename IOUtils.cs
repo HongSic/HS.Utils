@@ -32,8 +32,10 @@ namespace HS.Utils
                 }
                 return Destination;
             }
-            catch (Exception ex) { if (ThrowException) throw ex; else return null; }
+            catch { if (ThrowException) throw; else return null; }
         }
+
+#if NETCORE || NETCOREAPP || NETSTANDARD || NET45
         public static async Task<Stream> CopyStreamAsync(this Stream Source, Stream Destination, int Buffer = 512, bool ThrowException = true)
         {
             if (Source == null) { if (ThrowException) throw new ArgumentNullException("Source"); else return null; }
@@ -59,8 +61,9 @@ namespace HS.Utils
                 }
                 return Destination;
             }
-            catch (Exception ex) { if (ThrowException) throw ex; else return null; }
+            catch { if (ThrowException) throw; else return null; }
         }
+#endif
 
         public static void WriteStreamToFile(string Path, Stream Stream, bool IsAppend = false)
         {

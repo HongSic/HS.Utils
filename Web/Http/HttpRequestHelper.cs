@@ -45,7 +45,7 @@ namespace HS.Utils.Web.Http
         
         #region SendRestful
         public static HttpWebResponse SendRestful(this Uri URL, string Method = HttpMethod.GET, HttpKeyValue Data = null, HttpKeyValue Header = null, CookieCollection Cookie = null) { return SendRestful(HttpRequestBuilder.Build(URL, Method, Data, Header, Cookie)); }
-        public static HttpWebResponse SendRestful(this HttpWebRequest Request, Stream Data = null, int Depth = 10)
+        public static HttpWebResponse SendRestful(this HttpWebRequest Request, System.IO.Stream Data = null, int Depth = 10)
         {
             Request.AllowAutoRedirect = false;
             try { return (HttpWebResponse)Request.GetResponse(); }
@@ -101,7 +101,7 @@ namespace HS.Utils.Web.Http
         /// <param name="Request"></param>
         /// <param name="Depth">If server sent redirect, redirect depth</param>
         /// <returns></returns>
-        public static async Task<HttpWebResponse> SendRestfulAsyncTask(this HttpWebRequest Request, Stream Data = null, int Depth = 10)
+        public static async Task<HttpWebResponse> SendRestfulAsyncTask(this HttpWebRequest Request, System.IO.Stream Data = null, int Depth = 10)
         {
             Request.AllowAutoRedirect = false;
             try { return (HttpWebResponse)Request.GetResponse(); }
@@ -187,7 +187,7 @@ namespace HS.Utils.Web.Http
         }
         #endregion
 
-        public static HttpWebRequest Clone(this HttpWebRequest Request, Uri URL, Stream Data = null)
+        public static HttpWebRequest Clone(this HttpWebRequest Request, Uri URL, System.IO.Stream Data = null)
         {
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(URL);
             request.Accept = Request.Accept;

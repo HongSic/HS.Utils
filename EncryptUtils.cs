@@ -10,7 +10,7 @@ namespace HS.Utils
         #region Hash
         public static string HashSHA256(this byte[] Data, bool IsUpper = true) { return HashSHA256(Data, 0, Data.Length, IsUpper); }
         public static string HashSHA256(this byte[] Data, int Offset, int Count, bool IsUpper = true) { return DataToString(new SHA256Managed().ComputeHash(Data, Offset, Count), IsUpper); }
-        public static string HashSHA256(this Stream BaseStream, bool IsUpper = true) { return DataToString(new SHA256Managed().ComputeHash(BaseStream), IsUpper); }
+        public static string HashSHA256(this System.IO.Stream BaseStream, bool IsUpper = true) { return DataToString(new SHA256Managed().ComputeHash(BaseStream), IsUpper); }
         private static string DataToString(byte[] Data, bool IsUpper)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -26,10 +26,10 @@ namespace HS.Utils
         private static byte[] UTF8Array(string Text) { return string.IsNullOrEmpty(Text) ? null : Encoding.UTF8.GetBytes(Text); }
 
         #region Encrypt / Decrypt AES Stream
-        public static CryptoStream GetEncryptStreamAES(this Stream BaseStream, string Password) { return _GetEncryptStreamAES(BaseStream, Password, null); }
-        public static CryptoStream GetEncryptStreamAES(this Stream BaseStream, string Password, string Salt) { return _GetEncryptStreamAES(BaseStream, Password, UTF8Array(Salt)); }
-        public static CryptoStream GetEncryptStreamAES(this Stream BaseStream, string Password, byte[] Salt) { return _GetEncryptStreamAES(BaseStream, Password, Salt); }
-        private static CryptoStream _GetEncryptStreamAES(this Stream BaseStream, string Password, byte[] Salt)
+        public static CryptoStream GetEncryptStreamAES(this System.IO.Stream BaseStream, string Password) { return _GetEncryptStreamAES(BaseStream, Password, null); }
+        public static CryptoStream GetEncryptStreamAES(this System.IO.Stream BaseStream, string Password, string Salt) { return _GetEncryptStreamAES(BaseStream, Password, UTF8Array(Salt)); }
+        public static CryptoStream GetEncryptStreamAES(this System.IO.Stream BaseStream, string Password, byte[] Salt) { return _GetEncryptStreamAES(BaseStream, Password, Salt); }
+        private static CryptoStream _GetEncryptStreamAES(this System.IO.Stream BaseStream, string Password, byte[] Salt)
         {
             RijndaelManaged RijndaelCipher = new RijndaelManaged();
 
@@ -47,10 +47,10 @@ namespace HS.Utils
             return new CryptoStream(BaseStream, Encryptor, CryptoStreamMode.Write);
         }
 
-        public static CryptoStream GetDecryptStreamAES(this Stream BaseStream, string Password) { return _GetDecryptStreamAES(BaseStream, Password, null); }
-        public static CryptoStream GetDecryptStreamAES(this Stream BaseStream, string Password, byte[] Salt) { return _GetDecryptStreamAES(BaseStream, Password, Salt); }
-        public static CryptoStream GetDecryptStreamAES(this Stream BaseStream, string Password, string Salt) { return _GetDecryptStreamAES(BaseStream, Password, UTF8Array(Salt)); }
-        private static CryptoStream _GetDecryptStreamAES(this Stream BaseStream, string Password, byte[] Salt = null)
+        public static CryptoStream GetDecryptStreamAES(this System.IO.Stream BaseStream, string Password) { return _GetDecryptStreamAES(BaseStream, Password, null); }
+        public static CryptoStream GetDecryptStreamAES(this System.IO.Stream BaseStream, string Password, byte[] Salt) { return _GetDecryptStreamAES(BaseStream, Password, Salt); }
+        public static CryptoStream GetDecryptStreamAES(this System.IO.Stream BaseStream, string Password, string Salt) { return _GetDecryptStreamAES(BaseStream, Password, UTF8Array(Salt)); }
+        private static CryptoStream _GetDecryptStreamAES(this System.IO.Stream BaseStream, string Password, byte[] Salt = null)
         {
             RijndaelManaged RijndaelCipher = new RijndaelManaged();
 

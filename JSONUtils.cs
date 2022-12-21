@@ -195,8 +195,8 @@ namespace HS.Utils
                 return sr.ReadToEnd();
             }
         }
-        public static Stream ToSerializeJSONStream_NS(this object Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream_NS(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
-        public static Stream ToSerializeJSONStream_NS(this object Instance, Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
+        public static System.IO.Stream ToSerializeJSONStream_NS(this object Instance, System.IO.Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream_NS(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
+        public static System.IO.Stream ToSerializeJSONStream_NS(this object Instance, System.IO.Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {
@@ -207,8 +207,8 @@ namespace HS.Utils
             return OutputStream;
         }
 
-        public static Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream_NS(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
-        public static Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
+        public static System.IO.Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, System.IO.Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream_NS(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
+        public static System.IO.Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, System.IO.Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {
@@ -238,7 +238,7 @@ namespace HS.Utils
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static T DeserializeJSON<T>(this Stream JSONStream)
+        public static T DeserializeJSON<T>(this System.IO.Stream JSONStream)
         {
             var serializer = new JsonSerializer();
             using (var sr = new StreamReader(JSONStream))
@@ -250,7 +250,7 @@ namespace HS.Utils
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static async Task<T> DeserializeJSONAsync<T>(Stream JSONStream) => await Task.Run(() => DeserializeJSON<T>(JSONStream));
+        public static async Task<T> DeserializeJSONAsync<T>(System.IO.Stream JSONStream) => await Task.Run(() => DeserializeJSON<T>(JSONStream));
 
         #region Etc
         public static Dictionary<string, object> ToDictionaryFromProperties<T>(this T Instance) where T : class

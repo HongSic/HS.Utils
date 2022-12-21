@@ -29,8 +29,8 @@ namespace HS.Utils.Web.Http
             else return new Uri(URL);
         }
 
-        public static void SetParam(this Stream Stream, HttpKeyValue Params, bool Close = CLOSE) { SetParam(Stream, Params, Encoding.UTF8, Close); }
-        public static void SetParam(this Stream Stream, HttpKeyValue Params, Encoding Encoding, bool Close = CLOSE)
+        public static void SetParam(this System.IO.Stream Stream, HttpKeyValue Params, bool Close = CLOSE) { SetParam(Stream, Params, Encoding.UTF8, Close); }
+        public static void SetParam(this System.IO.Stream Stream, HttpKeyValue Params, Encoding Encoding, bool Close = CLOSE)
         {
             if (Params != null && Params.Count > 0)
             {
@@ -113,7 +113,7 @@ namespace HS.Utils.Web.Http
             return Request;
         }
 
-        public static HttpWebRequest SetData(this HttpWebRequest Request, Stream Stream, bool Close = CLOSE)
+        public static HttpWebRequest SetData(this HttpWebRequest Request, System.IO.Stream Stream, bool Close = CLOSE)
         {
             if (Stream != null)
             {

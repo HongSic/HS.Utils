@@ -101,7 +101,7 @@ namespace HS.Utils
         /// <typeparam name="T"></typeparam>
         /// <param name="Data"></param>
         /// <returns></returns>
-        public static T DeserializeFromByteXML<T>(Stream Data)
+        public static T DeserializeFromByteXML<T>(System.IO.Stream Data)
         {
             XmlSerializer xs = new XmlSerializer(typeof(PackageInfo));
             return (T)xs.Deserialize(Data);

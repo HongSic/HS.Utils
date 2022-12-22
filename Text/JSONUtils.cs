@@ -8,7 +8,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HS.Utils
+namespace HS.Utils.Text
 {
     public static class JSONUtils
     {
@@ -19,7 +19,7 @@ namespace HS.Utils
             int i;
             int len = text.Length;
             StringBuilder sb = new StringBuilder(len + 4);
-            String t;
+            string t;
 
             for (i = 0; i < len; i++)
             {
@@ -53,7 +53,7 @@ namespace HS.Utils
                     default:
                         if (c < ' ')
                         {
-                            t = "000" + String.Format("X", c);
+                            t = "000" + string.Format("X", c);
                             sb.Append("\\u" + t.Substring(t.Length - 4));
                         }
                         else sb.Append(c);
@@ -73,7 +73,7 @@ namespace HS.Utils
         public static string JSONException(this Exception ex, string Message)
         {
             StringBuilder sb = new StringBuilder("{\"result\":\"fail\",\"message\":\"");
-            sb.Append(EncodeJSON(Message)).Append("\",");
+            sb.Append(Message.EncodeJSON()).Append("\",");
             sb.Append("\"exception\":{\"message\":\"").Append(ex.Message.EncodeJSON());
             sb.Append("\"}}");
             return sb.ToString();
@@ -101,12 +101,12 @@ namespace HS.Utils
                     Data.GetType() == typeof(double) |
                     Data.GetType() == typeof(decimal) |
                     Data.GetType() == typeof(BigInteger)) return Data.ToString();
-            else if(Data.GetType() == typeof(DateTime))
+            else if (Data.GetType() == typeof(DateTime))
             {
                 DateTime dt = (DateTime)Data;
                 return string.Format("\"{0}\"", dt.ToISO8601(false));
             }
-            else if(Data.GetType() == typeof(TimeSpan))
+            else if (Data.GetType() == typeof(TimeSpan))
             {
                 TimeSpan ts = (TimeSpan)Data;
                 return string.Format("\"{0:00}:{1:00}:{2:00}.{3:000}\"", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
@@ -122,7 +122,7 @@ namespace HS.Utils
             bool first = true;
             foreach (var key in Dic.Keys)
             {
-                sb.AppendFormat((first ? "\"{0}\":\"{1}\"" : ",\"{0}\":\"{1}\""), key, Dic[key]);
+                sb.AppendFormat(first ? "\"{0}\":\"{1}\"" : ",\"{0}\":\"{1}\"", key, Dic[key]);
                 first = false;
             }
             if (Bracket) sb.Append("}");
@@ -135,7 +135,7 @@ namespace HS.Utils
             bool first = true;
             foreach (var key in Dic.Keys)
             {
-                sb.AppendFormat((first ? "\"{0}\":{1}" : ",\"{0}\":{1}"), key, Dic[key].ToStringForJSON());
+                sb.AppendFormat(first ? "\"{0}\":{1}" : ",\"{0}\":{1}", key, Dic[key].ToStringForJSON());
                 first = false;
             }
             if (Bracket) sb.Append("}");
@@ -148,7 +148,7 @@ namespace HS.Utils
             bool first = true;
             foreach (var key in Dic.Keys)
             {
-                sb.AppendFormat((first ? "\"{0}\":{1}" : ",\"{0}\":{1}"), key, Dic[key].ToStringForJSON());
+                sb.AppendFormat(first ? "\"{0}\":{1}" : ",\"{0}\":{1}", key, Dic[key].ToStringForJSON());
                 first = false;
             }
             if (Bracket) sb.Append("}");
@@ -178,7 +178,7 @@ namespace HS.Utils
         public static string ToSerializeJSON_NS(this object Instance, JsonSerializerSettings JSONSetting = null)
         {
             using (var ms = new StreamReaderTemp())
-            using (var sr = new StreamReader(ToSerializeJSONStream_NS(Instance, ms, JSONSetting)))
+            using (var sr = new StreamReader(Instance.ToSerializeJSONStream_NS(ms, JSONSetting)))
             {
                 ms.Position = 0;
                 try { return sr.ReadToEnd(); }
@@ -189,13 +189,13 @@ namespace HS.Utils
         public static string ToSerializeJSON_NS(this IEnumerable<SerializeJSON> Instance, JsonSerializerSettings JSONSetting = null)
         {
             using (var ms = new StreamReaderTemp())
-            using (var sr = new StreamReader(ToSerializeJSONStream_NS(Instance, ms, JSONSetting)))
+            using (var sr = new StreamReader(Instance.ToSerializeJSONStream_NS(ms, JSONSetting)))
             {
                 ms.Position = 0;
                 return sr.ReadToEnd();
             }
         }
-        public static System.IO.Stream ToSerializeJSONStream_NS(this object Instance, System.IO.Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream_NS(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
+        public static System.IO.Stream ToSerializeJSONStream_NS(this object Instance, System.IO.Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return Instance.ToSerializeJSONStream_NS(OutputStream, Encoding.UTF8, JSONSetting); }
         public static System.IO.Stream ToSerializeJSONStream_NS(this object Instance, System.IO.Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
@@ -207,16 +207,16 @@ namespace HS.Utils
             return OutputStream;
         }
 
-        public static System.IO.Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, System.IO.Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return ToSerializeJSONStream_NS(Instance, OutputStream, Encoding.UTF8, JSONSetting); }
+        public static System.IO.Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, System.IO.Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return Instance.ToSerializeJSONStream_NS(OutputStream, Encoding.UTF8, JSONSetting); }
         public static System.IO.Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, System.IO.Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {
                 var json = JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
                 JObject obj = new JObject();
-                foreach(var ins in Instance)
+                foreach (var ins in Instance)
                 {
-                    if(ins != null)
+                    if (ins != null)
                     {
                         if (ins.Name == null) obj.Add(JObject.FromObject(ins.Value));
                         else obj.Add(new JProperty(ins.Name, JObject.FromObject(ins.Value)));
@@ -250,7 +250,7 @@ namespace HS.Utils
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static async Task<T> DeserializeJSONAsync<T>(System.IO.Stream JSONStream) => await Task.Run(() => DeserializeJSON<T>(JSONStream));
+        public static async Task<T> DeserializeJSONAsync<T>(System.IO.Stream JSONStream) => await Task.Run(() => JSONStream.DeserializeJSON<T>());
 
         #region Etc
         public static Dictionary<string, object> ToDictionaryFromProperties<T>(this T Instance) where T : class

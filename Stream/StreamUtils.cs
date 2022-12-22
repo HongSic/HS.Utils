@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HS.Utils
+namespace HS.Utils.Stream
 {
     public static class StreamUtils
     {
@@ -73,7 +73,7 @@ namespace HS.Utils
         public static void WriteStreamToFile(string Path, System.IO.Stream Stream, bool IsAppend = false)
         {
             FileStream fs = new FileStream(Path, IsAppend ? FileMode.Append : FileMode.Create);
-            CopyStream(Stream, fs)?.Close();
+            Stream.CopyStream(fs)?.Close();
         }
 
         public static System.IO.Stream GetResourceStream(string Namespace, string Name) { return GetResourceStream(Namespace + "." + Name, Assembly.GetCallingAssembly()); }

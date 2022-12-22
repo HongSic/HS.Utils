@@ -2,11 +2,10 @@
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace HS.Utils
+namespace HS.Utils.Text
 {
     public static class StringUtils
     {
@@ -55,7 +54,7 @@ namespace HS.Utils
                 bool First = true;
                 StringBuilder sb = new StringBuilder();
 
-                for(int i = 0; i < Array.Length; i++)
+                for (int i = 0; i < Array.Length; i++)
                 {
                     if (First) { First = false; sb.Append(Array[i]); }
                     else { sb.Append(Separater).Append(Array[i]); }
@@ -103,7 +102,7 @@ namespace HS.Utils
         /// <param name="URL">부모 URL 입니다</param>
         /// <param name="RelativeLink">하위 경로 입니다</param>
         /// <returns></returns>
-        public static string ToAbsolutePath(this string URL, string RelativeLink) { return ToAbsolutePath(new Uri(URL), RelativeLink); }
+        public static string ToAbsolutePath(this string URL, string RelativeLink) { return new Uri(URL).ToAbsolutePath(RelativeLink); }
 
         //https://rextester.com/AKMG13869
         //이 함수 현재 속도 1(4n) 을 1(n) 로 낮출 필요 있음
@@ -133,7 +132,7 @@ namespace HS.Utils
         {
             //string path = Process.GetCurrentProcess().Modules[1].FileName;
             //string path = Process.GetCurrentProcess().StartInfo.WorkingDirectory;
-            string path = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string path = Assembly.GetExecutingAssembly().Location;
             return Path.GetDirectoryName(path);
         }
 
@@ -146,8 +145,8 @@ namespace HS.Utils
         /// <returns></returns>
         public static string MakeValidFileName(this string FileName, bool UnderBar = false, bool IgnorePathChar = true)
         {
-            char[] orig = {'/', '\\', '"',  ':', '?', '<', '>', '|' };
-            char[] repl = { 
+            char[] orig = { '/', '\\', '"', ':', '?', '<', '>', '|' };
+            char[] repl = {
                 '⁄',  // U+2044 fraction slash 
                 '＼', // U+33FC back slash
                 '”', // U+201D right double quotation mark
@@ -252,7 +251,7 @@ namespace HS.Utils
             return index;
 
         }
-#endregion
+        #endregion
 
         #region DateTime Utils
         /// <summary>
@@ -263,7 +262,7 @@ namespace HS.Utils
         /// <returns>yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz 로 이루어진 문자열 입니다.</returns>
         public static string ToISO8601(this DateTime date, bool TimeZone = true)
         {
-            if(TimeZone) return date.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz");
+            if (TimeZone) return date.ToString("yyyy-MM-ddTHH\\:mm\\:ss.fffffffzzz");
             else return date.ToString("o", CultureInfo.InvariantCulture);
         }
         #endregion
@@ -307,7 +306,7 @@ namespace HS.Utils
         {
             if (Text == null) return null;
             int index = LastIndexOf ? Text.LastIndexOf(Search) : Text.IndexOf(Search);
-            return index < 0 ? (NotFoundNull ? null : Text) : Text.Remove(index);
+            return index < 0 ? NotFoundNull ? null : Text : Text.Remove(index);
         }
         /// <summary>
         /// 
@@ -320,7 +319,7 @@ namespace HS.Utils
         {
             if (string.IsNullOrEmpty(Text)) return null;
             int index = LastIndexOf ? Text.LastIndexOf(Search) : Text.IndexOf(Search);
-            return index < 0 ? (NotFoundNull ? null : Text) : Text.Remove(index);
+            return index < 0 ? NotFoundNull ? null : Text : Text.Remove(index);
         }
         #endregion
 

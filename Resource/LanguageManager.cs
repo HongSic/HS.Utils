@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace HS.Utils
+namespace HS.Utils.Resource
 {
     public class LanguageManager : IDisposable
     {
@@ -19,7 +19,7 @@ namespace HS.Utils
         }
         public LanguageManager(IEnumerable<string> Language)
         {
-            foreach(string line in Language) Add(line);
+            foreach (string line in Language) Add(line);
         }
         public LanguageManager(IEnumerator<string> Language)
         {
@@ -30,7 +30,7 @@ namespace HS.Utils
         private void Add(string Line)
         {
             if (!string.IsNullOrEmpty(Line) &&
-                (Line[0] >= 'A' && Line[0] <= 'Z'))
+                Line[0] >= 'A' && Line[0] <= 'Z')
             {
                 int index = Line.IndexOf('=');
                 if (index > 0)

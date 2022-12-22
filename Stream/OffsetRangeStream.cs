@@ -88,7 +88,7 @@ namespace HS.Utils.Stream
         {
             if (!LeaveOpen) BaseStream.Dispose();
         }
-
+        /*
 #if NETCORE || NETCOREAPP || NETSTANDARD || NET45
         public override ValueTask DisposeAsync()
         {
@@ -96,5 +96,6 @@ namespace HS.Utils.Stream
             else return new ValueTask();
         }
 #endif
+        */
     }
 }

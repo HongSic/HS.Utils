@@ -1,5 +1,4 @@
-﻿using EasyReleaseCore.Struct;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml.Serialization;
@@ -37,7 +36,7 @@ namespace HS.Utils
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static byte[] ToSerializeBytesXML(this object obj)
+        public static byte[] ToSerializeBytesXML<T>(this T obj)
         {
             using (MemoryStream ms = ToSerializeBytesXMLStream(obj))
                 return ms.ToArray();
@@ -48,10 +47,10 @@ namespace HS.Utils
         /// <typeparam name="T"></typeparam>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static MemoryStream ToSerializeBytesXMLStream(this object obj)
+        public static MemoryStream ToSerializeBytesXMLStream<T>(this T obj)
         {
             MemoryStream ms = new MemoryStream();
-            XmlSerializer xs = new XmlSerializer(typeof(PackageInfo));
+            XmlSerializer xs = new XmlSerializer(typeof(T));
             xs.Serialize(ms, obj);
             ms.Position = 0;
             return ms;
@@ -103,7 +102,7 @@ namespace HS.Utils
         /// <returns></returns>
         public static T DeserializeFromByteXML<T>(System.IO.Stream Data)
         {
-            XmlSerializer xs = new XmlSerializer(typeof(PackageInfo));
+            XmlSerializer xs = new XmlSerializer(typeof(T));
             return (T)xs.Deserialize(Data);
         }
         #endregion

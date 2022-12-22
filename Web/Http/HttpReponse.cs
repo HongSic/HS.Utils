@@ -1,8 +1,7 @@
-﻿using System;
+﻿using HS.Utils.Stream;
+using System;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using EasyReleaseCore.Lib.HS.HS.Utils.Stream;
 
 namespace HS.Utils.Web.Http
 {

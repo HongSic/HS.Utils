@@ -31,5 +31,24 @@ namespace HS.Utils.Stream
         public override void SetLength(long value) => BaseStream.SetLength(value);
 
         public override void Write(byte[] buffer, int offset, int count) => BaseStream.Write(buffer, offset, count);
+
+        public override void Close()
+        {
+            if (!LeaveOpen) BaseStream.Close();
+        }
+
+        public new void Dispose()
+        {
+            if (!LeaveOpen) BaseStream.Dispose();
+        }
+        /*
+#if NETCORE || NETCOREAPP || NETSTANDARD || NET45
+        public override ValueTask DisposeAsync()
+        {
+            if (!LeaveOpen) return BaseStream.DisposeAsync();
+            else return new ValueTask();
+        }
+#endif
+        */
     }
 }

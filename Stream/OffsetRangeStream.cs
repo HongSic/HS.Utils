@@ -72,24 +72,5 @@ namespace HS.Utils.Stream
             }
             else BaseStream.Write(buffer, offset, count);
         }
-
-        public override void Close()
-        {
-            if(!LeaveOpen) BaseStream.Close();
-        }
-
-        public new void Dispose()
-        {
-            if (!LeaveOpen) BaseStream.Dispose();
-        }
-        /*
-#if NETCORE || NETCOREAPP || NETSTANDARD || NET45
-        public override ValueTask DisposeAsync()
-        {
-            if (!LeaveOpen) return BaseStream.DisposeAsync();
-            else return new ValueTask();
-        }
-#endif
-        */
     }
 }

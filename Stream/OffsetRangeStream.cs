@@ -7,14 +7,11 @@ namespace HS.Utils.Stream
     /// <summary>
     /// 
     /// </summary>
-    public class OffsetRangeStream : System.IO.Stream
+    public class OffsetRangeStream : KeepStream
     {
-        public OffsetRangeStream(System.IO.Stream BaseStream, long Offset, bool LeaveOpen = false)
+        public OffsetRangeStream(System.IO.Stream BaseStream, long Offset, bool LeaveOpen = false): base(BaseStream, LeaveOpen)
         {
-            this.BaseStream = BaseStream;
             this.Offset = Offset;
-            this.LeaveOpen = LeaveOpen;
-
             BaseStream.Position = Offset;
         }
         public OffsetRangeStream(System.IO.Stream BaseStream, long Offset, long MaxLength, bool LeaveOpen = false): this(BaseStream, Offset, LeaveOpen)
@@ -22,13 +19,10 @@ namespace HS.Utils.Stream
             this.MaxLength = MaxLength;
         }
 
-        public bool LeaveOpen { get; set; } = false;
-
         public long MaxLength { get; private set; }
         public bool MaxLengthEnable => MaxLength > 0;
 
         public long Offset { get; private set; }
-        public System.IO.Stream BaseStream { get; private set; }
 
         public override bool CanRead => BaseStream.CanRead;
 

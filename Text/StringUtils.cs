@@ -166,10 +166,14 @@ namespace HS.Utils.Text
         /// <param name="A">경로 1</param>
         /// <param name="B">경로 2</param>
         /// <returns>두 경로가 합쳐진 경로 입니다</returns>
-        public static string PathMakerAuto(string A, string B)
+        public static string PathMaker(string A, string B)
         {
-            char c = Environment.OSVersion.Platform == PlatformID.Win32NT ? '\\' : '/';
-            return PathMaker(A, B, c);
+            char PathChar = Environment.OSVersion.Platform == PlatformID.Win32NT ? '\\' : '/';
+
+            if (IsNullOrWhiteSpace(A) || IsNullOrWhiteSpace(B)) return A + B;
+            else if (Same(A[A.Length - 1]) && Same(B[0])) return A + B.Substring(1, B.Length - 1);
+            else if (Same(B[0]) || Same(A[A.Length - 1])) return A + B;
+            else return A + PathChar + B;
         }
         /// <summary>
         /// 두 경로를 합쳐 올바른 경로로 만들어 줍니다
@@ -178,11 +182,11 @@ namespace HS.Utils.Text
         /// <param name="B">경로 2</param>
         /// <param name="PathChar">두 경로 사이에 붙을 경로 문자 입니다</param>
         /// <returns>두 경로가 합쳐진 경로 입니다</returns>
-        public static string PathMaker(string A, string B, char PathChar = '/')
+        public static string PathMaker(string A, string B, char PathChar)
         {
             if (IsNullOrWhiteSpace(A) || IsNullOrWhiteSpace(B)) return A + B;
-            else if (Same(A[A.Length - 1]) && Same(B[0])) return A + B.Substring(1, B.Length - 1);
-            else if (Same(B[0]) || Same(A[A.Length - 1])) return A + B;
+            else if (A[A.Length - 1] == PathChar && B[0] == PathChar) return A + B.Substring(1, B.Length - 1);
+            else if (B[0] == PathChar || A[A.Length - 1] == PathChar) return A + B;
             else return A + PathChar + B;
         }
         private static bool Same(char p) { return p == '/' || p == '\\'; }

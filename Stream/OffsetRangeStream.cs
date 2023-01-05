@@ -9,11 +9,33 @@ namespace HS.Utils.Stream
     /// </summary>
     public class OffsetRangeStream : KeepStream
     {
+        /// <summary>
+        /// 범위가 있는 스트림입니다 (현재 위치로 오프셋을 설정합니다)
+        /// </summary>
+        /// <param name="BaseStream"></param>
+        /// <param name="LeaveOpen">true 면 스트림이 안 닫힘, false 면 닫힘</param>
+        public OffsetRangeStream(System.IO.Stream BaseStream, bool LeaveOpen = false) : base(BaseStream, LeaveOpen)
+        {
+            this.Offset = BaseStream.Position;
+        }
+        /// <summary>
+        /// 범위가 있는 스트림입니다
+        /// </summary>
+        /// <param name="BaseStream"></param>
+        /// <param name="Offset">해당 오프셋에 맞게 부모 스트림도 위치가 조정됩니다</param>
+        /// <param name="LeaveOpen">true 면 스트림이 안 닫힘, false 면 닫힘</param>
         public OffsetRangeStream(System.IO.Stream BaseStream, long Offset, bool LeaveOpen = false): base(BaseStream, LeaveOpen)
         {
             this.Offset = Offset;
             BaseStream.Position = Offset;
         }
+        /// <summary>
+        /// 범위가 있는 스트림입니다
+        /// </summary>
+        /// <param name="BaseStream"></param>
+        /// <param name="Offset">해당 오프셋에 맞게 부모 스트림도 위치가 조정됩니다</param>
+        /// <param name="MaxLength">최대 범위 입니다</param>
+        /// <param name="LeaveOpen">true 면 스트림이 안 닫힘, false 면 닫힘</param>
         public OffsetRangeStream(System.IO.Stream BaseStream, long Offset, long MaxLength, bool LeaveOpen = false): this(BaseStream, Offset, LeaveOpen)
         {
             this.MaxLength = MaxLength;

@@ -126,6 +126,7 @@ namespace HS.Utils
         private static byte[] EncryptStringAES(this string Text, string Password, byte[] Salt) { return _EncryptStringAES(Text, Password, Salt); }
         private static byte[] _EncryptStringAES(this string Text, string Password, byte[] Salt)
         {
+            if (Text == null) return null;
             // 입력받은 문자열을 바이트 배열로 변환
             byte[] PlainText = Encoding.UTF8.GetBytes(Text);
             // 딕셔너리 공격을 대비해서 키를 더 풀기 어렵게 만들기 위해서 
@@ -134,15 +135,16 @@ namespace HS.Utils
         }
 
 
-        public static string DecryptToBase64AES(this string EncryptedBase64, string Password) { return DecryptStringAES(Convert.FromBase64String(EncryptedBase64), Password); }
+        public static string DecryptBase64AES(this string EncryptedBase64, string Password) { return DecryptStringAES(Convert.FromBase64String(EncryptedBase64), Password); }
         public static string DecryptBase64AES(this string EncryptedBase64, string Password, string Salt = null) { return DecryptStringAES(Convert.FromBase64String(EncryptedBase64), Password, Salt); }
-        public static string DecryptToBase64AES(this string EncryptedBase64, string Password, byte[] Salt = null) { return DecryptStringAES(Convert.FromBase64String(EncryptedBase64), Password, Salt); }
+        public static string DecryptBase64AES(this string EncryptedBase64, string Password, byte[] Salt = null) { return DecryptStringAES(Convert.FromBase64String(EncryptedBase64), Password, Salt); }
 
         public static string DecryptStringAES(this byte[] EncryptedData, string Password) { return _DecryptStringAES(EncryptedData, Password, null); }
         public static string DecryptStringAES(this byte[] EncryptedData, string Password, string Salt) { return _DecryptStringAES(EncryptedData, Password, UTF8Array(Salt)); }
         public static string DecryptStringAES(this byte[] EncryptedData, string Password, byte[] Salt) { return _DecryptStringAES(EncryptedData, Password, Salt); }
         private static string _DecryptStringAES(this byte[] EncryptedData, string Password, byte[] Salt)
         {
+            if(EncryptedData.Length == 0) return null;
             // 딕셔너리 공격을 대비해서 키를 더 풀기 어렵게 만들기 위해서 
             // Salt를 사용한다.
 

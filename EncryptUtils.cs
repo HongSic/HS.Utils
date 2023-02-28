@@ -32,9 +32,10 @@ namespace HS.Utils
         private static CryptoStream _GetEncryptStreamAES(this System.IO.Stream BaseStream, string Password, byte[] Salt)
         {
             RijndaelManaged RijndaelCipher = new RijndaelManaged();
+            var salt = Salt == null ? Encoding.ASCII.GetBytes(Password.Length.ToString()) : Salt;
 
             // PasswordDeriveBytes 클래스를 사용해서 SecretKey를 얻는다.
-            PasswordDeriveBytes SecretKey = new PasswordDeriveBytes(Password, Salt);
+            PasswordDeriveBytes SecretKey = new PasswordDeriveBytes(Password, salt);
             // Create a encryptor from the existing SecretKey bytes.
             // encryptor 객체를 SecretKey로부터 만든다.
             // Secret Key에는 32바이트
@@ -54,9 +55,10 @@ namespace HS.Utils
         {
             RijndaelManaged RijndaelCipher = new RijndaelManaged();
 
-            // 딕셔너리 공격을 대비해서 키를 더 풀기 어렵게 만들기 위해서 
+            // 딕셔너리 공격을 대비해서 키를 더 풀기 어렵게 만들기 위해서
             // Salt를 사용한다.
             var salt = Salt == null ? Encoding.ASCII.GetBytes(Password.Length.ToString()) : Salt;
+
             PasswordDeriveBytes SecretKey = new PasswordDeriveBytes(Password, salt);
             // Decryptor 객체를 만든다.
             ICryptoTransform Decryptor = RijndaelCipher.CreateDecryptor(SecretKey.GetBytes(32), SecretKey.GetBytes(16));

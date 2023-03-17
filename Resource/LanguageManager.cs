@@ -91,6 +91,11 @@ namespace HS.Utils.Resource
             }
             return Original;
         }
+
+        #region Operator
+        public static LanguageManager operator +(LanguageManager Original, LanguageManager Instance) => Merge(true, Original, Instance);
+        #endregion
+
         ~LanguageManager() { Dispose(false); }
     }
 }

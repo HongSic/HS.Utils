@@ -7,6 +7,31 @@ namespace HS.Utils
 {
     public static class EncryptUtils
     {
+        /// <summary>
+        /// Make password hash with SHA256
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="Salt"></param>
+        /// <param name="Upper"></param>
+        /// <returns></returns>
+        public static string PasswordHash(this string password, string Salt = null, bool Upper = false)
+        {
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(Salt + password));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++)
+                {
+                    builder.Append(bytes[i].ToString(Upper ? "X2" : "x2"));
+                }
+                return builder.ToString();
+            }
+        }
+
         #region Hash
         public static string HashSHA256(this byte[] Data, bool IsUpper = true) { return HashSHA256(Data, 0, Data.Length, IsUpper); }
         public static string HashSHA256(this byte[] Data, int Offset, int Count, bool IsUpper = true) { return DataToString(new SHA256Managed().ComputeHash(Data, Offset, Count), IsUpper); }

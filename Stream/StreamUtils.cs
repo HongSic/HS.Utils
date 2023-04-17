@@ -175,5 +175,54 @@ namespace HS.Utils.Stream
                 return sb.ToString();
             }
         }
+
+        /*
+        public static int EstimateOutputLength(int inputLength, bool RFC2047)
+        {
+            if (RFC2047)
+            {
+                return (inputLength + 2) / 3 * 4;
+            }
+
+            int num = quartetsPerLine * 4 + 1;
+            int num2 = quartetsPerLine * 3;
+            return (inputLength + 2) / num2 * num + num;
+        }
+        */
+
+        public static string ToBase64(this System.IO.Stream Stream)
+        {
+            //MimeKit.Encodings.Base64Encoder
+            if (Stream is MemoryStream memoryStream)
+            {
+                return Convert.ToBase64String(memoryStream.ToArray());
+            }
+
+            var bytes = new byte[(int)Stream.Length];
+
+            Stream.Read(bytes, 0, (int)Stream.Length);
+
+            return Convert.ToBase64String(bytes);
+        }
+
+#if !NET20 || !NET35 || !NET40
+        public static Task<string> ToBase64Async(this System.IO.Stream Stream, bool RFC2047 = true) => ToBase64Async(Stream, RFC2047, new System.Threading.CancellationToken());
+        public static Task<string> ToBase64Async(this System.IO.Stream Stream, bool RFC2047, System.Threading.CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                if (Stream is MemoryStream memoryStream)
+                {
+                    return Convert.ToBase64String(memoryStream.ToArray());
+                }
+
+                var bytes = new byte[(int)Stream.Length];
+
+                await Stream.ReadAsync(bytes, 0, (int)Stream.Length, cancellationToken);
+
+                return Convert.ToBase64String(bytes);
+            }, cancellationToken);
+        }
+#endif
     }
 }

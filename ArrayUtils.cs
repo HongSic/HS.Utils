@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -34,5 +35,8 @@ namespace HS.Utils
                 return sb.ToString();
             }
         }
+
+        public static string ToBase64(this byte[] Data) => Convert.ToBase64String(Data);
+        public static string ToBase64(this byte[] Data, int Offset, int Length) => Convert.ToBase64String(Data, Offset, Length);
     }
 }

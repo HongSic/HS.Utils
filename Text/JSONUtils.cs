@@ -5,7 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Runtime;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace HS.Utils.Text
@@ -162,6 +164,11 @@ namespace HS.Utils.Text
             NullValueHandling = NullValueHandling.Include,
             Formatting = Formatting.Indented,
         };
+        public static JsonSerializerOptions DefaultJsonSerializerOption = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+        };
+
         public class SerializeJSON
         {
             public SerializeJSON(object Value, string Name = null) { this.Name = Name; this.Value = Value; }
@@ -175,6 +182,7 @@ namespace HS.Utils.Text
             public override void Close() { if (LOCK_DISPOSE) base.Close(); }
         }
 
+        public static string ToSerializeJSON_MS(this object Instance, JsonSerializerOptions JSONOption = null) { return System.Text.Json.JsonSerializer.Serialize(Instance, JSONOption ?? DefaultJsonSerializerOption); }
         public static string ToSerializeJSON_NS(this object Instance, JsonSerializerSettings JSONSetting = null)
         {
             using (var ms = new StreamReaderTemp())
@@ -186,6 +194,7 @@ namespace HS.Utils.Text
             }
         }
 
+        public static string ToSerializeJSON_MS(this IEnumerable<SerializeJSON> Instance, JsonSerializerOptions JSONOption = null) { return System.Text.Json.JsonSerializer.Serialize(Instance, JSONOption ?? DefaultJsonSerializerOption); }
         public static string ToSerializeJSON_NS(this IEnumerable<SerializeJSON> Instance, JsonSerializerSettings JSONSetting = null)
         {
             using (var ms = new StreamReaderTemp())
@@ -195,24 +204,41 @@ namespace HS.Utils.Text
                 return sr.ReadToEnd();
             }
         }
+
+        public static System.IO.Stream ToSerializeJSONStream_MS(this object Instance, System.IO.Stream OutputStream, JsonSerializerOptions JSONOption = null)
+        {
+            using (Utf8JsonWriter sw = new Utf8JsonWriter(OutputStream))
+            {
+                System.Text.Json.JsonSerializer.Serialize(sw, Instance, JSONOption ?? DefaultJsonSerializerOption);
+            }
+            return OutputStream;
+        }
         public static System.IO.Stream ToSerializeJSONStream_NS(this object Instance, System.IO.Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return Instance.ToSerializeJSONStream_NS(OutputStream, Encoding.UTF8, JSONSetting); }
         public static System.IO.Stream ToSerializeJSONStream_NS(this object Instance, System.IO.Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {
-                var json = JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
+                var json = Newtonsoft.Json.JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
                 //json.Formatting = Minify ? Formatting.None : Formatting.Indented;
                 json.Serialize(sw, Instance);
             }
             return OutputStream;
         }
 
+        public static System.IO.Stream ToSerializeJSONStream_MS(this IEnumerable<SerializeJSON> Instance, System.IO.Stream OutputStream, JsonSerializerOptions JSONOption = null)
+        {
+            using (Utf8JsonWriter sw = new Utf8JsonWriter(OutputStream))
+            {
+                System.Text.Json.JsonSerializer.Serialize(sw, Instance, JSONOption ?? DefaultJsonSerializerOption);
+            }
+            return OutputStream;
+        }
         public static System.IO.Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, System.IO.Stream OutputStream, JsonSerializerSettings JSONSetting = null) { return Instance.ToSerializeJSONStream_NS(OutputStream, Encoding.UTF8, JSONSetting); }
         public static System.IO.Stream ToSerializeJSONStream_NS(this IEnumerable<SerializeJSON> Instance, System.IO.Stream OutputStream, Encoding Encoding, JsonSerializerSettings JSONSetting = null)
         {
             using (StreamWriter sw = new StreamWriter(OutputStream, Encoding))
             {
-                var json = JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
+                var json = Newtonsoft.Json.JsonSerializer.Create(JSONSetting ?? DefaultJsonSerializerSetting);
                 JObject obj = new JObject();
                 foreach (var ins in Instance)
                 {
@@ -228,29 +254,52 @@ namespace HS.Utils.Text
         #endregion
 
         /// <summary>
-        /// JSON 문자열으로부터 설정 불러오기
+        /// JSON 문자열으로부터 설정 불러오기 [Microsoft.Test.Json]
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static T DeserializeJSON<T>(string JSONString, JsonSerializerSettings Settings = null) => JsonConvert.DeserializeObject<T>(JSONString, Settings);
+        public static T DeserializeJSON_MS<T>(string JSONString, JsonSerializerOptions JSONOption = null) => System.Text.Json.JsonSerializer.Deserialize<T>(JSONString, JSONOption ?? DefaultJsonSerializerOption);
         /// <summary>
-        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다)
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Microsoft.Test.Json]
+        /// </summary>
+        /// <param name="JSONStream">JSON 스트림</param>
+        /// <returns></returns>
+        public static T DeserializeJSON_MS<T>(this System.IO.Stream JSONStream, JsonSerializerOptions JSONOption = null)
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<T>(JSONStream, JSONOption ?? DefaultJsonSerializerOption);
+        }
+
+        /// <summary>
+        /// JSON 문자열으로부터 설정 불러오기 [Newtonsoft.Json]
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static T DeserializeJSON<T>(this System.IO.Stream JSONStream)
+        public static T DeserializeJSON_NS<T>(string JSONString, JsonSerializerSettings Settings = null) => JsonConvert.DeserializeObject<T>(JSONString, Settings ?? DefaultJsonSerializerSetting);
+        /// <summary>
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Newtonsoft.Json]
+        /// </summary>
+        /// <param name="JSONStream">JSON 스트림</param>
+        /// <returns></returns>
+        public static T DeserializeJSON_NS<T>(this System.IO.Stream JSONStream)
         {
-            var serializer = new JsonSerializer();
+            var serializer = new Newtonsoft.Json.JsonSerializer();
             using (var sr = new StreamReader(JSONStream))
             using (var jsonTextReader = new JsonTextReader(sr))
                 return serializer.Deserialize<T>(jsonTextReader);
         }
+
         /// <summary>
-        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다)
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Microsoft.Test.Json]
         /// </summary>
         /// <param name="JSONString">설정 JSON 문자열</param>
         /// <returns></returns>
-        public static async Task<T> DeserializeJSONAsync<T>(System.IO.Stream JSONStream) => await Task.Run(() => JSONStream.DeserializeJSON<T>());
+        public static ValueTask<T> DeserializeJSONAsync_MS<T>(System.IO.Stream JSONStream, JsonSerializerOptions JSONOption = null) { return System.Text.Json.JsonSerializer.DeserializeAsync<T>(JSONStream, JSONOption ?? DefaultJsonSerializerOption); }
+        /// <summary>
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Newtonsoft.Json]
+        /// </summary>
+        /// <param name="JSONString">설정 JSON 문자열</param>
+        /// <returns></returns>
+        public static async Task<T> DeserializeJSONAsync_NS<T>(System.IO.Stream JSONStream) => await Task.Run(() => JSONStream.DeserializeJSON_NS<T>());
 
         #region Etc
         public static Dictionary<string, object> ToDictionaryFromProperties<T>(this T Instance) where T : class

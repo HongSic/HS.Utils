@@ -26,11 +26,11 @@ namespace HS.Utils.Web.Http
 
         public static T GetInstance<T>(this HttpWebResponse Response)
         {
-            using(Response) return JSONUtils.DeserializeJSON<T>(Response.GetResponseStream());
+            using(Response) return JSONUtils.DeserializeJSON_NS<T>(Response.GetResponseStream());
         }
         public static async Task<T> GetInstanceAsync<T>(this HttpWebResponse Response)
         {
-            using(Response) return await JSONUtils.DeserializeJSONAsync<T>(Response.GetResponseStream()); 
+            using(Response) return await JSONUtils.DeserializeJSONAsync_NS<T>(Response.GetResponseStream()); 
         }
 #endif
     }

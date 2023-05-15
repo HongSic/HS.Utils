@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -86,6 +88,40 @@ namespace HS.Utils.Text
 
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// 주어진 단위 만큼 문자열을 자릅니다 
+        /// </summary>
+        /// <param name="Text"></param>
+        /// <param name="Distance"></param>
+        /// <returns></returns>
+        public static string[] Split(this string Text, int Distance) { return Split(Text, Distance, 0); }
+        /// <summary>
+        /// 주어진 단위 만큼 문자열을 자릅니다 
+        /// </summary>
+        /// <param name="Text"></param>
+        /// <param name="Distance">자를 단위 값입니다</param>
+        /// <param name="Options"></param>
+        /// <returns></returns>
+        public static string[] Split(this string Text, int Distance, int Count)
+        {
+            if (Count < 0) throw new ArgumentOutOfRangeException("Count", "Negative number does not allow");
+
+            int Length = Text.Length / Distance;
+            if (Length == 0) return new string[1] { Text };
+
+            Length += (Text.Length % Distance == 0 ? 0 : 1);
+            if (Count > 0) Length = Math.Min(Length, Count);
+
+            string[] list = new string[Length];
+            for (int i = 0, j = 0; i < Text.Length; i += Distance)
+            {
+                int split = i + Distance > Text.Length ? Text.Length - i : Distance;
+                list[j++] = Text.Substring(i, split);
+            }
+
+            return list;
         }
 
         #region URI Utils

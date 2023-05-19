@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,10 +13,20 @@ namespace HS.Utils
             if (Params == null || Params.Length == 0) return;
             for (int i = 0; i < Params.Length; i++) Stack.Push(Params[i]);
         }
+        public static void PushAll<T>(this Stack<T> Stack, IEnumerable<T> Params)
+        {
+            if (Params == null) return;
+            foreach(var Param in Params) Stack.Push(Param);
+        }
         public static void EnqueueAll<T>(this Queue<T> Queue, params T[] Params)
         {
             if (Params == null || Params.Length == 0) return;
             for (int i = 0; i < Params.Length; i++) Queue.Enqueue(Params[i]);
+        }
+        public static void EnqueueAll<T>(this Queue<T> Queue, IEnumerable<T> Params)
+        {
+            if (Params == null) return;
+            foreach (var Param in Params) Queue.Enqueue(Param);
         }
 
         public static string HashMD5(this byte[] Data, bool UpperCase) { return Data == null ? null : HashMD5(Data, 0, Data.Length, UpperCase); }

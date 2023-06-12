@@ -254,52 +254,99 @@ namespace HS.Utils.Text
         #endregion
 
         /// <summary>
-        /// JSON 문자열으로부터 설정 불러오기 [Microsoft.Test.Json]
+        /// JSON 문자열으로부터 불러오기 [Microsoft.Test.Json]
         /// </summary>
-        /// <param name="JSONString">설정 JSON 문자열</param>
+        /// <param name="JSONString">JSON 문자열</param>
         /// <returns></returns>
-        public static T DeserializeJSON_MS<T>(string JSONString, JsonSerializerOptions JSONOption = null) => System.Text.Json.JsonSerializer.Deserialize<T>(JSONString, JSONOption ?? DefaultJsonSerializerOption);
+        public static T DeserializeJSON_MS<T>(this string JSONString, JsonSerializerOptions JSONOption = null) { return (T)DeserializeJSON_MS(JSONString, typeof(T), JSONOption);  }
+        /// <summary>
+        /// JSON 문자열으로부터 불러오기 [Microsoft.Test.Json]
+        /// </summary>
+        /// <param name="JSONString">JSON 문자열</param>
+        /// <param name="Type">변환할 형식</param>
+        /// <returns></returns>
+        public static object DeserializeJSON_MS(this string JSONString, Type Type, JsonSerializerOptions JSONOption = null)
+        {
+            return System.Text.Json.JsonSerializer.Deserialize(JSONString, Type, JSONOption ?? DefaultJsonSerializerOption);
+        }
         /// <summary>
         /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Microsoft.Test.Json]
         /// </summary>
         /// <param name="JSONStream">JSON 스트림</param>
         /// <returns></returns>
-        public static T DeserializeJSON_MS<T>(this System.IO.Stream JSONStream, JsonSerializerOptions JSONOption = null)
+        public static T DeserializeJSON_MS<T>(this System.IO.Stream JSONStream, JsonSerializerOptions JSONOption = null) { return (T)DeserializeJSON_MS(JSONStream, typeof(T), JSONOption); }
+        /// <summary>
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Microsoft.Test.Json]
+        /// </summary>
+        /// <param name="JSONStream">JSON 스트림</param>
+        /// <param name="Type">변환할 형식</param>
+        /// <returns></returns>
+        public static object DeserializeJSON_MS(this System.IO.Stream JSONStream, Type Type, JsonSerializerOptions JSONOption = null)
         {
-            return System.Text.Json.JsonSerializer.Deserialize<T>(JSONStream, JSONOption ?? DefaultJsonSerializerOption);
+            return System.Text.Json.JsonSerializer.Deserialize(JSONStream, Type, JSONOption ?? DefaultJsonSerializerOption);
         }
 
         /// <summary>
-        /// JSON 문자열으로부터 설정 불러오기 [Newtonsoft.Json]
+        /// JSON 문자열으로부터 불러오기 [Newtonsoft.Json]
         /// </summary>
-        /// <param name="JSONString">설정 JSON 문자열</param>
+        /// <param name="JSONString">JSON 문자열</param>
         /// <returns></returns>
-        public static T DeserializeJSON_NS<T>(string JSONString, JsonSerializerSettings Settings = null) => JsonConvert.DeserializeObject<T>(JSONString, Settings ?? DefaultJsonSerializerSetting);
+        public static T DeserializeJSON_NS<T>(string JSONString, JsonSerializerSettings Settings = null) { return (T)DeserializeJSON_NS(JSONString, typeof(T), Settings); }
+        /// <summary>
+        /// JSON 문자열으로부터 불러오기 [Newtonsoft.Json]
+        /// </summary>
+        /// <param name="JSONString">JSON 문자열</param>
+        /// <param name="Type">변환할 형식</param>
+        /// <returns></returns>
+        public static object DeserializeJSON_NS(string JSONString, Type Type, JsonSerializerSettings Settings = null) => JsonConvert.DeserializeObject(JSONString, Type, Settings ?? DefaultJsonSerializerSetting);
         /// <summary>
         /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Newtonsoft.Json]
         /// </summary>
         /// <param name="JSONStream">JSON 스트림</param>
         /// <returns></returns>
-        public static T DeserializeJSON_NS<T>(this System.IO.Stream JSONStream)
+        public static T DeserializeJSON_NS<T>(this System.IO.Stream JSONStream) { return (T)DeserializeJSON_NS(JSONStream, typeof(T)); }
+        /// <summary>
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Newtonsoft.Json]
+        /// </summary>
+        /// <param name="JSONStream">JSON 스트림</param>
+        /// <param name="Type">변환할 형식</param>
+        /// <returns></returns>
+        public static object DeserializeJSON_NS(this System.IO.Stream JSONStream, Type Type)
         {
             var serializer = new Newtonsoft.Json.JsonSerializer();
             using (var sr = new StreamReader(JSONStream))
             using (var jsonTextReader = new JsonTextReader(sr))
-                return serializer.Deserialize<T>(jsonTextReader);
+                return serializer.Deserialize(jsonTextReader, Type);
         }
 
+#if NETCORE || NETSTANDARD
         /// <summary>
         /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Microsoft.Test.Json]
         /// </summary>
-        /// <param name="JSONString">설정 JSON 문자열</param>
+        /// <param name="JSONStream">JSON 스트림</param>
         /// <returns></returns>
         public static ValueTask<T> DeserializeJSONAsync_MS<T>(System.IO.Stream JSONStream, JsonSerializerOptions JSONOption = null) { return System.Text.Json.JsonSerializer.DeserializeAsync<T>(JSONStream, JSONOption ?? DefaultJsonSerializerOption); }
         /// <summary>
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Microsoft.Test.Json]
+        /// </summary>
+        /// <param name="JSONStream">JSON 스트림</param>
+        /// <param name="Type">변환할 형식</param>
+        /// <returns></returns>
+        public static ValueTask<object> DeserializeJSONAsync_MS(System.IO.Stream JSONStream, Type Type, JsonSerializerOptions JSONOption = null) { return System.Text.Json.JsonSerializer.DeserializeAsync(JSONStream, Type, JSONOption ?? DefaultJsonSerializerOption); }
+        /// <summary>
         /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Newtonsoft.Json]
         /// </summary>
-        /// <param name="JSONString">설정 JSON 문자열</param>
+        /// <param name="JSONStream">JSON 스트림</param>
         /// <returns></returns>
-        public static async Task<T> DeserializeJSONAsync_NS<T>(System.IO.Stream JSONStream) => await Task.Run(() => JSONStream.DeserializeJSON_NS<T>());
+        public static async Task<T> DeserializeJSONAsync_NS<T>(System.IO.Stream JSONStream) => await Task.Run(() => DeserializeJSON_NS<T>(JSONStream));
+        /// <summary>
+        /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Newtonsoft.Json]
+        /// </summary>
+        /// <param name="JSONStream">JSON 스트림</param>
+        /// <param name="Type">변환할 형식</param>
+        /// <returns></returns>
+        public static async Task<object> DeserializeJSONAsync_NS(System.IO.Stream JSONStream, Type Type) => await Task.Run(() => DeserializeJSON_NS(JSONStream, Type));
+#endif
 
         #region Etc
         public static Dictionary<string, object> ToDictionaryFromProperties<T>(this T Instance) where T : class

@@ -36,6 +36,16 @@ namespace HS.Utils
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
+        public static string ToSerializeXML<T>(this T obj)
+        {
+            using (MemoryStream ms = ToSerializeBytesXMLStream(obj))
+            using (StreamReader sr = new StreamReader(ms)) return sr.ReadToEnd();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static byte[] ToSerializeBytesXML<T>(this T obj)
         {
             using (MemoryStream ms = ToSerializeBytesXMLStream(obj))
@@ -63,23 +73,51 @@ namespace HS.Utils
         /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="buffer"></param>
+        /// <param name="XMLData"></param>
+        /// <returns></returns>
+        public static T DeserializeFromXML<T>(this string XMLData) { return (T)DeserializeFromXML(XMLData, typeof(T)); }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="XMLData"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public static object DeserializeFromXML(this string XMLData, Type Type)
+        {
+            XmlSerializer xs = new XmlSerializer(Type);
+            using (TextReader reader = new StringReader(XMLData))
+                return xs.Deserialize(reader);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Data"></param>
+        /// <param name="Type"></param>
+        /// <param name="CheckLength"></param>
+        /// <returns></returns>
+        public static T DeserializeFromByte<T>(this byte[] Data, Type Type, bool CheckLength = true) { return (T)DeserializeFromByte(Data, typeof(T), CheckLength); }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Data"></param>
+        /// <param name="Type"></param>
         /// <param name="CheckLength"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public static T DeserializeFromByte<T>(this byte[] data, bool CheckLength = true)
+        public static object DeserializeFromByte(this byte[] Data, Type Type, bool CheckLength = true)
         {
             //구조체 사이즈 
-            int size = Marshal.SizeOf(typeof(T));
+            int size = Marshal.SizeOf(Type);
 
-            if (CheckLength && size > data.Length)
+            if (CheckLength && size > Data.Length)
             {
-                throw new Exception(string.Format("Buffer length must be same or bigger than T ({0}) size", typeof(T).Name));
+                throw new Exception(string.Format("Buffer length must be same or bigger than T ({0}) size", Type.Name));
             }
 
             IntPtr ptr = Marshal.AllocHGlobal(size);
-            Marshal.Copy(data, 0, ptr, size);
-            T obj = (T)Marshal.PtrToStructure(ptr, typeof(T));
+            Marshal.Copy(Data, 0, ptr, size);
+            object obj = Marshal.PtrToStructure(ptr, Type);
             Marshal.FreeHGlobal(ptr);
             return obj;
         }
@@ -87,23 +125,37 @@ namespace HS.Utils
         /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="buffer"></param>
+        /// <param name="Data"></param>
         /// <returns></returns>
-        public static T DeserializeFromByteXML<T>(this byte[] data)
-        {
-            using (var stream = new MemoryStream(data))
-                return DeserializeFromByteXML<T>(stream);
-        }
+        public static T DeserializeFromByteXML<T>(this byte[] Data) { return (T)DeserializeFromByteXML(Data, typeof(T)); }
         /// <summary>
         /// 
+        /// </summary>
+        /// <param name="Data"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public static object DeserializeFromByteXML(this byte[] Data, Type Type)
+        {
+            using (var stream = new MemoryStream(Data))
+                return DeserializeFromByteXML(stream, Type);
+        }
+        /// <summary>
+        /// /
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="Data"></param>
         /// <returns></returns>
-        public static T DeserializeFromByteXML<T>(System.IO.Stream Data)
+        public static T DeserializeFromByteXML<T>(System.IO.Stream Data) { return (T)DeserializeFromByteXML(Data, typeof(T)); }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Data"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public static object DeserializeFromByteXML(System.IO.Stream Data, Type Type)
         {
-            XmlSerializer xs = new XmlSerializer(typeof(T));
-            return (T)xs.Deserialize(Data);
+            XmlSerializer xs = new XmlSerializer(Type);
+            return xs.Deserialize(Data);
         }
         #endregion
     }

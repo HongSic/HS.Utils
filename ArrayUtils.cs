@@ -47,7 +47,7 @@ namespace HS.Utils
             }
         }
 
-        public static string ToBase64(this byte[] Data) => Convert.ToBase64String(Data);
-        public static string ToBase64(this byte[] Data, int Offset, int Length) => Convert.ToBase64String(Data, Offset, Length);
+        public static string ToBase64(this byte[] Data) { return System.Convert.ToBase64String(Data); }
+        public static string ToBase64(this byte[] Data, int Offset, int Length) { return System.Convert.ToBase64String(Data, Offset, Length); }
     }
 }

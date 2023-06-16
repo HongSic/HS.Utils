@@ -144,9 +144,9 @@ namespace HS.Utils
         #endregion
 
         #region Encrypt / Decrypt AES String
-        public static string EncryptToBase64AES(this string Text, string Password) { return Convert.ToBase64String(EncryptStringAES(Text, Password), Base64FormattingOptions.InsertLineBreaks); }
-        public static string EncryptBase64AES(this string Text, string Password, string Salt) { return Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.InsertLineBreaks); }
-        public static string EncryptToBase64AES(this string Text, string Password, byte[] Salt) { return Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.InsertLineBreaks); }
+        public static string EncryptToBase64AES(this string Text, string Password) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password), Base64FormattingOptions.InsertLineBreaks); }
+        public static string EncryptBase64AES(this string Text, string Password, string Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.InsertLineBreaks); }
+        public static string EncryptToBase64AES(this string Text, string Password, byte[] Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.InsertLineBreaks); }
 
         private static byte[] EncryptStringAES(this string Text, string Password) { return _EncryptStringAES(Text, Password, null); }
         private static byte[] EncryptStringAES(this string Text, string Password, string Salt) { return _EncryptStringAES(Text, Password, UTF8Array(Salt)); }
@@ -162,9 +162,9 @@ namespace HS.Utils
         }
 
 
-        public static string DecryptBase64AES(this string EncryptedBase64, string Password) { return DecryptStringAES(Convert.FromBase64String(EncryptedBase64), Password); }
-        public static string DecryptBase64AES(this string EncryptedBase64, string Password, string Salt = null) { return DecryptStringAES(Convert.FromBase64String(EncryptedBase64), Password, Salt); }
-        public static string DecryptBase64AES(this string EncryptedBase64, string Password, byte[] Salt = null) { return DecryptStringAES(Convert.FromBase64String(EncryptedBase64), Password, Salt); }
+        public static string DecryptBase64AES(this string EncryptedBase64, string Password) { return DecryptStringAES(System.Convert.FromBase64String(EncryptedBase64), Password); }
+        public static string DecryptBase64AES(this string EncryptedBase64, string Password, string Salt = null) { return DecryptStringAES(System.Convert.FromBase64String(EncryptedBase64), Password, Salt); }
+        public static string DecryptBase64AES(this string EncryptedBase64, string Password, byte[] Salt = null) { return DecryptStringAES(System.Convert.FromBase64String(EncryptedBase64), Password, Salt); }
 
         public static string DecryptStringAES(this byte[] EncryptedData, string Password) { return _DecryptStringAES(EncryptedData, Password, null); }
         public static string DecryptStringAES(this byte[] EncryptedData, string Password, string Salt) { return _DecryptStringAES(EncryptedData, Password, UTF8Array(Salt)); }

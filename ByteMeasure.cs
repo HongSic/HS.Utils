@@ -52,21 +52,21 @@ namespace HS.Utils
             if (Dec)
             {
                 if (Byte < 1000) { Measure = ByteUnit.Byte; return (double)Byte; }
-                else if (Byte < 1000000) { Measure = ByteUnit.KByte; return Convert.ToDouble((Byte / 1000).ToString("N" + 최대자릿수)); }
-                else if (Byte < 1000000000) { Measure = ByteUnit.MByte; return Convert.ToDouble((Byte / 1000000).ToString("N" + 최대자릿수)); }
-                else if (Byte < 1000000000000) { Measure = ByteUnit.GByte; return Convert.ToDouble((Byte / 1000000000).ToString("N" + 최대자릿수)); }
-                else if (Byte < 1000000000000000) { Measure = ByteUnit.TByte; return Convert.ToDouble((Byte / 1000000000000).ToString("N" + 최대자릿수)); }
-                else if (Byte < 1000000000000000000) { Measure = ByteUnit.PByte; return Convert.ToDouble((Byte / 1000000000000000).ToString("N" + 최대자릿수)); }
+                else if (Byte < 1000000) { Measure = ByteUnit.KByte; return System.Convert.ToDouble((Byte / 1000).ToString("N" + 최대자릿수)); }
+                else if (Byte < 1000000000) { Measure = ByteUnit.MByte; return System.Convert.ToDouble((Byte / 1000000).ToString("N" + 최대자릿수)); }
+                else if (Byte < 1000000000000) { Measure = ByteUnit.GByte; return System.Convert.ToDouble((Byte / 1000000000).ToString("N" + 최대자릿수)); }
+                else if (Byte < 1000000000000000) { Measure = ByteUnit.TByte; return System.Convert.ToDouble((Byte / 1000000000000).ToString("N" + 최대자릿수)); }
+                else if (Byte < 1000000000000000000) { Measure = ByteUnit.PByte; return System.Convert.ToDouble((Byte / 1000000000000000).ToString("N" + 최대자릿수)); }
                 else { Measure = ByteUnit.OutByte; return -1; }
             }
             else
             {
                 if (Byte < 1024) { Measure = ByteUnit.Byte; return (double)Byte; }
-                else if (Byte < 1048576) { Measure = ByteUnit.KByte; return Convert.ToDouble((Byte / 1024).ToString("N" + 최대자릿수)); ; }
-                else if (Byte < 1073741824) { Measure = ByteUnit.MByte; return Convert.ToDouble((Byte / 1048576).ToString("N" + 최대자릿수)); ; }
-                else if (Byte < 1099511627776) { Measure = ByteUnit.GByte; return Convert.ToDouble((Byte / 1073741824).ToString("N" + 최대자릿수)); ; }
-                else if (Byte < 1125899906842624) { Measure = ByteUnit.TByte; return Convert.ToDouble((Byte / 1099511627776).ToString("N" + 최대자릿수)); ; }
-                else if (Byte < 1152921504606846976) { Measure = ByteUnit.PByte; return Convert.ToDouble((Byte / 1125899906842624).ToString("N" + 최대자릿수)); ; }
+                else if (Byte < 1048576) { Measure = ByteUnit.KByte; return System.Convert.ToDouble((Byte / 1024).ToString("N" + 최대자릿수)); ; }
+                else if (Byte < 1073741824) { Measure = ByteUnit.MByte; return System.Convert.ToDouble((Byte / 1048576).ToString("N" + 최대자릿수)); ; }
+                else if (Byte < 1099511627776) { Measure = ByteUnit.GByte; return System.Convert.ToDouble((Byte / 1073741824).ToString("N" + 최대자릿수)); ; }
+                else if (Byte < 1125899906842624) { Measure = ByteUnit.TByte; return System.Convert.ToDouble((Byte / 1099511627776).ToString("N" + 최대자릿수)); ; }
+                else if (Byte < 1152921504606846976) { Measure = ByteUnit.PByte; return System.Convert.ToDouble((Byte / 1125899906842624).ToString("N" + 최대자릿수)); ; }
                 else { Measure = ByteUnit.OutByte; return -1; }
             }
         }

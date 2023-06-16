@@ -195,14 +195,14 @@ namespace HS.Utils.Stream
             //MimeKit.Encodings.Base64Encoder
             if (Stream is MemoryStream memoryStream)
             {
-                return Convert.ToBase64String(memoryStream.ToArray());
+                return System.Convert.ToBase64String(memoryStream.ToArray());
             }
 
             var bytes = new byte[(int)Stream.Length];
 
             Stream.Read(bytes, 0, (int)Stream.Length);
 
-            return Convert.ToBase64String(bytes);
+            return System.Convert.ToBase64String(bytes);
         }
 
 #if !NET20 || !NET35 || !NET40
@@ -213,14 +213,14 @@ namespace HS.Utils.Stream
             {
                 if (Stream is MemoryStream memoryStream)
                 {
-                    return Convert.ToBase64String(memoryStream.ToArray());
+                    return System.Convert.ToBase64String(memoryStream.ToArray());
                 }
 
                 var bytes = new byte[(int)Stream.Length];
 
                 await Stream.ReadAsync(bytes, 0, (int)Stream.Length, cancellationToken);
 
-                return Convert.ToBase64String(bytes);
+                return System.Convert.ToBase64String(bytes);
             }, cancellationToken);
         }
 #endif

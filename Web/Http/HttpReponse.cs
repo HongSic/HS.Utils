@@ -1,9 +1,9 @@
-﻿using HS.Utils.Stream;
-using System;
+﻿using System;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using HS.Utils.Text;
+using HS.Utils.IO.Stream;
 
 namespace HS.Utils.Web.Http
 {

@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HS.Utils.Stream
+namespace HS.Utils.IO.Stream
 {
     public static class StreamUtils
     {
@@ -206,7 +206,7 @@ namespace HS.Utils.Stream
         }
 
 #if !NET20 || !NET35 || !NET40
-        public static Task<string> ToBase64Async(this System.IO.Stream Stream, bool RFC2047 = true) => ToBase64Async(Stream, RFC2047, new System.Threading.CancellationToken());
+        public static Task<string> ToBase64Async(this System.IO.Stream Stream, bool RFC2047 = true) => Stream.ToBase64Async(RFC2047, new System.Threading.CancellationToken());
         public static Task<string> ToBase64Async(this System.IO.Stream Stream, bool RFC2047, System.Threading.CancellationToken cancellationToken)
         {
             return Task.Run(async () =>

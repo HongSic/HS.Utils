@@ -465,9 +465,33 @@ namespace HS.Utils.Text
         #endregion
 
         #region Check
+        /// <summary>
+        /// xxx@xxx.com
+        /// </summary>
+        /// <param name="Email"></param>
+        /// <returns></returns>
         public static bool CheckEmailAddress(this string Email) { return Regex.IsMatch(Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"); }
-        //xxx-xxxx-xxxx
+        /// <summary>
+        /// xxx-xxxx-xxxx
+        /// </summary>
+        /// <param name="Phone"></param>
+        /// <returns></returns>
         public static bool CheckPhoneNumber(this string Phone) { return Regex.IsMatch(Phone, @"^\d{3}-\d{3,4}-\d{4}$"); }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="FileName"></param>
+        /// <returns></returns>
+        public static bool CheckValidFileName(this string FileName)
+        {
+            if (!string.IsNullOrEmpty(FileName)) return false;
+
+            var chars = Path.GetInvalidFileNameChars();
+            for (int i = 0; i < FileName.Length; i++)
+                for (int j = 0; j < chars.Length; j++)
+                    if (FileName[i] == chars[j]) return false;
+            return true;
+        }
         #endregion
 
         //(StackOverflow 링크 추가)

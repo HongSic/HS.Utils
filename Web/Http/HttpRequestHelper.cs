@@ -1,4 +1,4 @@
-﻿using HS.Utils.Stream;
+﻿using HS.Utils.IO.Stream;
 using System;
 using System.IO;
 using System.Net;

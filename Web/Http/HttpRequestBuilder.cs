@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using HS.Utils.Stream;
+using HS.Utils.IO.Stream;
 using HS.Utils.Text;
 
 namespace HS.Utils.Web.Http

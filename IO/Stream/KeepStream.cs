@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace HS.Utils.Stream
+namespace HS.Utils.IO.Stream
 {
     public class KeepStream : System.IO.Stream
     {

@@ -65,30 +65,6 @@ namespace HS.Utils.Text
                 return sb.ToString();
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="Array"></param>
-        /// <param name="Separater"></param>
-        /// <returns></returns>
-        public static string Merge(this string[] Array, string Separater)
-        {
-            if (Array == null) return null;
-            else if (Array.Length == 0) return "";
-            else
-            {
-                bool First = true;
-                StringBuilder sb = new StringBuilder();
-
-                for (int i = 0; i < Array.Length; i++)
-                {
-                    if (First) { First = false; sb.Append(Separater); }
-                    else { sb.Append(Separater); sb.Append(Array[i]); }
-                }
-
-                return sb.ToString();
-            }
-        }
 
         /// <summary>
         /// 주어진 단위 만큼 문자열을 자릅니다 

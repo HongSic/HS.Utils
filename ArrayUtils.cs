@@ -49,5 +49,23 @@ namespace HS.Utils
 
         public static string ToBase64(this byte[] Data) { return System.Convert.ToBase64String(Data); }
         public static string ToBase64(this byte[] Data, int Offset, int Length) { return System.Convert.ToBase64String(Data, Offset, Length); }
+
+        public static string ToMergeString(this IEnumerable Array, string Separater)
+        {
+            if (Array == null) return null;
+            else
+            {
+                bool First = true;
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var item in Array)
+                {
+                    if (First) { First = false; sb.Append(Separater); }
+                    else { sb.Append(Separater); sb.Append(item.ToString()); }
+                }
+
+                return sb.ToString();
+            }
+        }
     }
 }

@@ -60,8 +60,10 @@ namespace HS.Utils
 
                 foreach (var item in Array)
                 {
-                    if (First) { First = false; sb.Append(Separater); }
-                    else { sb.Append(Separater); sb.Append(item.ToString()); }
+                    if (First) First = false;
+                    else sb.Append(Separater);
+
+                    sb.Append(item.ToString());
                 }
 
                 return sb.ToString();

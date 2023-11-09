@@ -144,9 +144,9 @@ namespace HS.Utils
         #endregion
 
         #region Encrypt / Decrypt AES String
-        public static string EncryptToBase64AES(this string Text, string Password) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password), Base64FormattingOptions.InsertLineBreaks); }
-        public static string EncryptBase64AES(this string Text, string Password, string Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.InsertLineBreaks); }
-        public static string EncryptToBase64AES(this string Text, string Password, byte[] Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.InsertLineBreaks); }
+        public static string EncryptToBase64AES(this string Text, string Password) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password), Base64FormattingOptions.None); }
+        public static string EncryptBase64AES(this string Text, string Password, string Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.None); }
+        public static string EncryptToBase64AES(this string Text, string Password, byte[] Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.None); }
 
         private static byte[] EncryptStringAES(this string Text, string Password) { return _EncryptStringAES(Text, Password, null); }
         private static byte[] EncryptStringAES(this string Text, string Password, string Salt) { return _EncryptStringAES(Text, Password, UTF8Array(Salt)); }

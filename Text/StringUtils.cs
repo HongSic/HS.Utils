@@ -468,6 +468,25 @@ namespace HS.Utils.Text
                     if (FileName[i] == chars[j]) return false;
             return true;
         }
+
+        /// <summary>
+        /// Check Alphabet, Number Only
+        /// </summary>
+        /// <param name="Text"></param>
+        /// <returns></returns>
+        public static bool CheckAlphabetNumber(this string Text)
+        {
+            for (int i = 0; i < Text.Length; i++)
+            {
+                //아이디가 해당영역에 포함되어 있지 않으면...
+                if (!(Text[i] >= 0x30 && Text[i] <= 0x39) && //숫자 영역
+                    !(Text[i] >= 0x41 && Text[i] <= 0x5A) && //알파벳 대문자
+                    !(Text[i] >= 0x61 && Text[i] <= 0x7A))   //알파벳 소문자
+                    return false;
+            }
+
+            return true;
+        }
         #endregion
 
         //(StackOverflow 링크 추가)

@@ -17,7 +17,7 @@ namespace HS.Utils.Web.Http
 
         public static byte[] GetData(this HttpWebResponse Response, bool Close = true) { return Response.GetResponseStream().GetData(Close); }
 
-#if NETSTANDARD2_0_OR_GREATER && (!NET20 && !NET30 && !NET35 && !NET40) || NETCORE || NETCOREAPP || NETSTANDARD
+#if NETSTANDARD2_0_OR_GREATER || (!NET20 && !NET30 && !NET35 && !NET40) || NETCORE || NETCOREAPP || NETSTANDARD
         public static async Task<string> GetStringAsync(this HttpWebResponse Response, bool Close = true) { return await Response.GetResponseStream().GetStringAsync(Close); }
         public static async Task<string> GetStringAsync(this HttpWebResponse Response, Encoding Encoding, bool Close = true) { return await Response.GetResponseStream().GetStringAsync(Encoding, Close); }
 

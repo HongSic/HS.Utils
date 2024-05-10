@@ -96,7 +96,7 @@ namespace HS.Utils
         /// <param name="Type"></param>
         /// <param name="CheckLength"></param>
         /// <returns></returns>
-        public static T DeserializeFromByte<T>(this byte[] Data, Type Type, bool CheckLength = true) { return (T)DeserializeFromByte(Data, typeof(T), CheckLength); }
+        public static T DeserializeFromByte<T>(this byte[] Data, bool CheckLength = true) { return (T)DeserializeFromByte(Data, typeof(T), CheckLength); }
         /// <summary>
         /// 
         /// </summary>

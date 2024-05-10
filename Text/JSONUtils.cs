@@ -319,7 +319,7 @@ namespace HS.Utils.Text
                 return serializer.Deserialize(jsonTextReader, Type);
         }
 
-#if NETCORE || NETSTANDARD
+#if NETSTANDARD2_0_OR_GREATER || (!NET20 && !NET30 && !NET35 && !NET40) || NETCORE || NETCOREAPP || NETSTANDARD
         /// <summary>
         /// JSON 문자열 스트림으로부터 설정 불러오기 (자동으로 스트림이 닫힙니다) [Microsoft.Test.Json]
         /// </summary>

@@ -58,10 +58,10 @@ namespace HS.Utils.Web.Http
                 finally { if (Close) writer?.Close(); }
             }
         }
-        public static HttpWebRequest SetParam(this HttpWebRequest Request, HttpKeyValue Params, bool Close = CLOSE) { return SetParam(Request, Params, Encoding.UTF8, Close); }
-        public static HttpWebRequest SetParam(this HttpWebRequest Request, HttpKeyValue Params, Encoding Encoding, bool Close = CLOSE)
+        public static HttpWebRequest SetParam(this HttpWebRequest Request, HttpKeyValue Params) { return SetParam(Request, Params, new UTF8Encoding(false)); }
+        public static HttpWebRequest SetParam(this HttpWebRequest Request, HttpKeyValue Params, Encoding Encoding)
         {
-            if (Params != null && Params.Count > 0)  SetParam(Request.GetRequestStream(), Params, Encoding, Close);
+            if (Params != null && Params.Count > 0)  SetParam(Request.GetRequestStream(), Params, Encoding, false);
             return Request;
         }
 

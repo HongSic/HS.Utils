@@ -1,5 +1,6 @@
 ﻿using HS.Utils.Text;
 using System;
+using System.Collections.Generic;
 
 namespace HS.Utils.Convert
 {
@@ -94,54 +95,74 @@ namespace HS.Utils.Convert
         {
             try
             {
-                Type type_col = Value.GetType();
-
-                if (DestinationType != type_col)
+                if (Value != null)
                 {
-                    if (type_col == typeof(DBNull)) Value = null;
-                    else
-                    {
+                    Type type_col = Value.GetType();
 
-#if NETCORE || NETSTANDARD
-                        if (DestinationType.Namespace == TYPE_NULLABLE.Namespace &&
-                            DestinationType.Name.StartsWith(TYPE_NULLABLE.Name)) return ConvertValue(Value, Nullable.GetUnderlyingType(DestinationType), Type);
-#endif
-                        if (Type == ConvertType.XML) Value = Value.ToString().DeserializeFromXML(DestinationType);
-                        else if (Type == ConvertType.JSON) Value = JSONUtils.DeserializeJSON_NS(Value.ToString(), DestinationType);
-                        else if (DestinationType == TYPE_BOOL) Value = System.Convert.ToBoolean(Value);
-                        else if (DestinationType == TYPE_CHAR) Value = System.Convert.ToChar(Value);
-                        else if (DestinationType == TYPE_STRING) Value = System.Convert.ToString(Value)?.Trim();
-                        else if (DestinationType == TYPE_BYTE) Value = System.Convert.ToByte(Value);
-                        else if (DestinationType == TYPE_SBYTE) Value = System.Convert.ToSByte(Value);
-                        else if (DestinationType == TYPE_USHORT) Value = System.Convert.ToInt16(Value);
-                        else if (DestinationType == TYPE_SHORT) Value = System.Convert.ToUInt16(Value);
-                        else if (DestinationType == TYPE_INT) Value = System.Convert.ToInt32(Value);
-                        else if (DestinationType == TYPE_UINT) Value = System.Convert.ToUInt32(Value);
-                        else if (DestinationType == TYPE_LONG) Value = System.Convert.ToInt64(Value);
-                        else if (DestinationType == TYPE_ULONG) Value = System.Convert.ToUInt64(Value);
-                        else if (DestinationType == TYPE_FLOAT) Value = System.Convert.ToSingle(Value);
-                        else if (DestinationType == TYPE_DOUBLE) Value = System.Convert.ToDouble(Value);
-                        else if (DestinationType == TYPE_DATETIME) Value = System.Convert.ToDateTime(Value);
+                    if (DestinationType != type_col)
+                    {
+                        if (type_col == typeof(DBNull)) Value = null;
                         else
                         {
-                            if (DestinationType.BaseType == TYPE_ENUM)
+
+#if NETCORE || NETSTANDARD
+                            if (DestinationType.Namespace == TYPE_NULLABLE.Namespace &&
+                                DestinationType.Name.StartsWith(TYPE_NULLABLE.Name)) return ConvertValue(Value, Nullable.GetUnderlyingType(DestinationType), Type);
+#endif
+                            if (Type == ConvertType.XML) Value = Value.ToString().DeserializeFromXML(DestinationType);
+                            else if (Type == ConvertType.JSON) Value = JSONUtils.DeserializeJSON_NS(Value.ToString(), DestinationType);
+                            else if (DestinationType == TYPE_BOOL) Value = System.Convert.ToBoolean(Value);
+                            else if (DestinationType == TYPE_CHAR) Value = System.Convert.ToChar(Value);
+                            else if (DestinationType == TYPE_STRING) Value = System.Convert.ToString(Value)?.Trim();
+                            else if (DestinationType == TYPE_BYTE) Value = System.Convert.ToByte(Value);
+                            else if (DestinationType == TYPE_SBYTE) Value = System.Convert.ToSByte(Value);
+                            else if (DestinationType == TYPE_USHORT) Value = System.Convert.ToInt16(Value);
+                            else if (DestinationType == TYPE_SHORT) Value = System.Convert.ToUInt16(Value);
+                            else if (DestinationType == TYPE_INT) Value = System.Convert.ToInt32(Value);
+                            else if (DestinationType == TYPE_UINT) Value = System.Convert.ToUInt32(Value);
+                            else if (DestinationType == TYPE_LONG) Value = System.Convert.ToInt64(Value);
+                            else if (DestinationType == TYPE_ULONG) Value = System.Convert.ToUInt64(Value);
+                            else if (DestinationType == TYPE_FLOAT) Value = System.Convert.ToSingle(Value);
+                            else if (DestinationType == TYPE_DOUBLE) Value = System.Convert.ToDouble(Value);
+                            else if (DestinationType == TYPE_DATETIME) Value = System.Convert.ToDateTime(Value);
+                            else
                             {
-                                if (type_col == TYPE_STRING)
+                                if (DestinationType.BaseType == TYPE_ENUM)
                                 {
-                                    string strval = ((string)Value)?.Trim();
-                                    //Enum 이름에 숫자를 사용할 수 없으므로 숫자는 실제 값으로 취급
-                                    if (int.TryParse(strval, out int Result)) Value = Result;
-                                    else Value = Enum.Parse(DestinationType, strval);
+                                    if (type_col == TYPE_STRING)
+                                    {
+                                        string strval = ((string)Value)?.Trim();
+                                        //Enum 이름에 숫자를 사용할 수 없으므로 숫자는 실제 값으로 취급
+                                        if (int.TryParse(strval, out int Result)) Value = Result;
+                                        else Value = Enum.Parse(DestinationType, strval);
+                                    }
+                                    else Value = Enum.ToObject(DestinationType, Value);
                                 }
-                                else Value = Enum.ToObject(DestinationType, Value);
                             }
                         }
                     }
+                    else if (type_col == TYPE_STRING) return ((string)Value)?.Trim();
                 }
-                else if (type_col == TYPE_STRING) return ((string)Value)?.Trim();
                 return Value;
             }
             catch (Exception ex) { throw new ConvertFailException(ex); }
         }
+
+        #region Clone List
+        public static List<T> CloneList<T>(this IList<T> list, bool deepClone = false)
+        {
+            var _list = new List<T>(list.Count);
+            _list.AddRange(list);
+            return _list;
+        }
+        public static List<T> DeepCloneList<T>(this IList<T> list) where T : ICloneable
+        {
+            var _list = new List<T>(list.Count);
+            for (int i = 0; i < _list.Count; i++)
+                _list.Add((T)list[i].Clone());
+            return _list;
+            //return list.Select(item => (T)item.Clone()).ToList();
+        }
+        #endregion
     }
 }

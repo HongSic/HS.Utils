@@ -69,5 +69,22 @@ namespace HS.Utils
                 return sb.ToString();
             }
         }
+
+        #region List Clone
+        public static List<T> CloneList<T>(this IList<T> list, bool deepClone = false)
+        {
+            var _list = new List<T>(list.Count);
+            _list.AddRange(list);
+            return _list;
+        }
+        public static List<T> CloneListDeep<T>(this IList<T> list) where T : ICloneable
+        {
+            var _list = new List<T>(list.Count);
+            for (int i = 0; i < _list.Count; i++)
+                _list.Add((T)list[i].Clone());
+            return _list;
+            //return list.Select(item => (T)item.Clone()).ToList();
+        }
+        #endregion
     }
 }

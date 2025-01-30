@@ -71,7 +71,7 @@ namespace HS.Utils
         }
 
         #region List Clone
-        public static List<T> CloneList<T>(this IList<T> list, bool deepClone = false)
+        public static List<T> CloneList<T>(this IList<T> list)
         {
             var _list = new List<T>(list.Count);
             _list.AddRange(list);

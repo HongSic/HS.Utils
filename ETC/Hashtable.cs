@@ -30,7 +30,7 @@ namespace HS.Utils.ETC
 
         private int GetBucketIndex(TKey key)
         {
-            return Math.Abs(key.GetHashCode()) % buckets.Length;
+            return buckets.Length > 0 ? Math.Abs(key.GetHashCode()) % buckets.Length : -1;
         }
 
         public void Add(TKey key)
@@ -83,15 +83,18 @@ namespace HS.Utils.ETC
         public bool Contains(TKey key)
         {
             int index = GetBucketIndex(key);
-            var bucket = buckets[index];
-
-            if (bucket != null)
+            if (index >= 0)
             {
-                foreach (var existingKey in bucket)
+                var bucket = buckets[index];
+
+                if (bucket != null)
                 {
-                    if (existingKey.Equals(key))
+                    foreach (var existingKey in bucket)
                     {
-                        return true;
+                        if (existingKey.Equals(key))
+                        {
+                            return true;
+                        }
                     }
                 }
             }

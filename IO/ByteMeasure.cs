@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace HS.Utils.IO
 {
@@ -143,13 +144,27 @@ namespace HS.Utils.IO
         /// <param name="Space">숫자와 문자 중간에 띄어쓰기를 할지 여부입니다.</param>
         /// <param name="DisplayFullMeasure">True면 'Byte' 를 표시하고 False 면 'B' 만 표시합니다.</param>
         /// <param name="최대자릿수">지정한 자릿수까지만 표시됩니다.</param>
+        /// <param name="AutoTrim">0 뒤에는 절사합니다</param>
         /// <returns></returns>
-        public static string NetworkString(this long Byte, bool Dec, bool Space, bool DisplayFullMeasure = false, byte 최대자릿수 = 2)
+        public static string NetworkString(this long Byte, bool Dec, bool Space, bool DisplayFullMeasure = false, byte 최대자릿수 = 2, bool AutoTrim = false)
         {
             ByteUnit nm = ByteUnit.OutByte;
             double a = MeasureCaculate(Byte, Dec, 최대자릿수, out nm);
 
-            return string.Format(Space ? "{0} {1}" : "{0}{1}", a.ToString("0.00"), nm.ByteUnitString(DisplayFullMeasure));
+            string format = "#,0";
+            if (nm != ByteUnit.Byte)
+            {
+                var sb = new StringBuilder();
+                for (int i = 0; i < 최대자릿수; i++)
+                {
+                    if (i == 0) sb.Append('.');
+
+                    if (AutoTrim) sb.Append("#");
+                    else sb.Append("0");
+                }
+                format += sb.ToString();
+            }
+            return string.Format(Space ? "{0} {1}" : "{0}{1}", a.ToString(format), nm.ByteUnitString(DisplayFullMeasure));
         }
         public static string ByteUnitString(this ByteUnit Measure, bool DisplayFullMeasure)
         {

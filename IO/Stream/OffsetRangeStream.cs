@@ -54,7 +54,7 @@ namespace HS.Utils.IO.Stream
 
         public override long Length => BaseStream.Length - Offset;
 
-        public override long Position { get => BaseStream.Position - Offset; set => BaseStream.Position = value + Offset; }
+        public override long Position { get { return BaseStream.Position - Offset; } set { BaseStream.Position = value + Offset; } }
 
         public override void Flush() => BaseStream.Flush();
 

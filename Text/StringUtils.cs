@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -213,18 +211,14 @@ namespace HS.Utils.Text
             if (IsNullOrWhiteSpace(Path) || Path == "\\" || Path == "/") return string.Empty;
             //if (string.IsNullOrWhiteSpace(path)) return string.Empty;
 
-#if VS2019 || VS2017
-            int index = GetLastIndexOfPath(Path, out string dirchar);
-#else
             string dirchar;
             int index = GetLastIndexOfPath(Path, out dirchar);
-#endif
 
             if (index > -1)
             {
                 string result = Path.Remove(index);
                 if (result == "") return dirchar;
-                else return result;
+                return result;
             }
             return string.Empty;
         }
@@ -249,11 +243,7 @@ namespace HS.Utils.Text
         /// <returns>이 함수를 호출한 어셈블리의 파일이름 입니다</returns>
         public static string GetCurrentModulePath() { return Assembly.GetCallingAssembly().Location; }
 
-#if VS2019 || VS2017
-        private static int GetLastIndexOfPath(string Path) { return GetLastIndexOfPath(Path, out _); }
-#else
         private static int GetLastIndexOfPath(string Path) { string dirchar; return GetLastIndexOfPath(Path, out dirchar); }
-#endif
 
         private static int GetLastIndexOfPath(string Path, out string dirchar)
         {

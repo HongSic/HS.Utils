@@ -20,7 +20,7 @@ namespace HS.Utils.IO.Stream
 
         public override long Length => BaseStream.Length;
 
-        public override long Position { get => BaseStream.Position; set => BaseStream.Position = value; }
+        public override long Position { get { return BaseStream.Position; } set { BaseStream.Position = value; } }
 
         public override void Flush() => BaseStream.Flush();
 

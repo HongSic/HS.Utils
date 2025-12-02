@@ -193,7 +193,8 @@ namespace HS.Utils.IO.Stream
         public static string ToBase64(this System.IO.Stream Stream)
         {
             //MimeKit.Encodings.Base64Encoder
-            if (Stream is MemoryStream memoryStream)
+            var memoryStream = Stream as MemoryStream;
+            if (memoryStream != null)
             {
                 return System.Convert.ToBase64String(memoryStream.ToArray());
             }
@@ -211,7 +212,8 @@ namespace HS.Utils.IO.Stream
         {
             return Task.Run(async () =>
             {
-                if (Stream is MemoryStream memoryStream)
+                var memoryStream = Stream as MemoryStream;
+                if (memoryStream != null)
                 {
                     return System.Convert.ToBase64String(memoryStream.ToArray());
                 }

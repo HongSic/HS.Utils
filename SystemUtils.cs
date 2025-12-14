@@ -22,9 +22,28 @@ namespace HS.Utils
         public static string CurrentDotnetPath(out string executeModulePath)
         {
             var process = Process.GetCurrentProcess();
-            executeModulePath = process.MainModule.FileName;
-            return process.ProcessName.ToLower() == "dotnet" ? process.ProcessName : null;
+            if (process.ProcessName.Equals("dotnet", StringComparison.OrdinalIgnoreCase))
+            {
+                // 실제 실행 DLL 경로 가져오기
+                executeModulePath = System.Reflection.Assembly.GetEntryAssembly()?.Location;
+                if (executeModulePath == null)
+                {
+                    // Fallback: AppContext.BaseDirectory + {ProcessName}.dll 추정
+                    string baseDir = AppContext.BaseDirectory;
+                    string dllName = process.ProcessName + ".dll";
+                    string guessDll = Path.Combine(baseDir, dllName);
+
+                    executeModulePath = File.Exists(guessDll) ? guessDll : null;
+                }
+                return process.MainModule.FileName;
+            }
+            else
+            {
+                executeModulePath = process.MainModule.FileName;
+                return null;
+            }
         }
+
         
         public static Platform GetPlatform()
         {

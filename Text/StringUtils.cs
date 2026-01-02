@@ -432,17 +432,76 @@ namespace HS.Utils.Text
 
         #region Check
         /// <summary>
-        /// xxx@xxx.com
+        /// 이메일 주소 형식 검사
         /// </summary>
         /// <param name="Email"></param>
         /// <returns></returns>
         public static bool CheckEmailAddress(this string Email) { return Regex.IsMatch(Email, @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$"); }
+        
+        #region CheckPhoneNumber
         /// <summary>
-        /// xxx-xxxx-xxxx
+        /// 국제 전화번호 형식(E.164)을 검사합니다. 예: +82 10-1234-5678, +821012345678
+        /// </summary>
+        /// <param name="Phone">전화번호 문자열</param>
+        /// <returns>국제 전화번호 형식이면 true</returns>
+        public static bool CheckPhoneNumberGlobalFormat(this string Phone)
+        {
+            if (string.IsNullOrWhiteSpace(Phone)) return false;
+
+            // 공백 제거
+            var normalized = Phone.Replace(" ", "");
+
+            // E.164 기반: +국가코드 + 숫자 (최소 8자리 ~ 최대 15자리)
+            return Regex.IsMatch(normalized, @"^\+[1-9]\d{7,14}$");
+        }
+        
+        /// <summary>
+        /// 국내 전화번호(대한민국) 하이픈 포함 형식 검사
+        /// - 휴대폰: 010-1234-5678, 011-123-4567 등
+        /// - 유선(지역번호): 02-123-4567, 02-1234-5678, 031-123-4567 등
         /// </summary>
         /// <param name="Phone"></param>
         /// <returns></returns>
-        public static bool CheckPhoneNumber(this string Phone) { return Regex.IsMatch(Phone, @"^\d{3}-\d{3,4}-\d{4}$"); }
+        public static bool CheckPhoneNumber(this string Phone)
+        {
+            return CheckPhoneNumberKoreaDomesticHyphenFormat(Phone);
+        }
+        /// <summary>
+        /// (호환/레거시) 3-3or4-4 형식만 허용하는 단순 검사
+        /// 예: 010-1234-5678, 031-123-4567
+        /// 주의: 02-1234-5678 같은 2자리 지역번호는 실패합니다.
+        /// </summary>
+        public static bool CheckPhoneNumberLegacyHyphen3_3or4_4(this string Phone)
+        {
+            if (string.IsNullOrWhiteSpace(Phone)) return false;
+            return Regex.IsMatch(Phone, @"^\d{3}-\d{3,4}-\d{4}$");
+        }
+
+        /// <summary>
+        /// 국내 전화번호(대한민국) 하이픈 포함 형식 검사
+        /// - 02-xxxx-xxxx / 02-xxx-xxxx
+        /// - 0xx-xxx-xxxx / 0xx-xxxx-xxxx
+        /// </summary>
+        public static bool CheckPhoneNumberKoreaDomesticHyphenFormat(this string Phone)
+        {
+            if (string.IsNullOrWhiteSpace(Phone)) return false;
+
+            // 02(서울) 또는 0xx(그 외 지역/휴대폰) + 하이픈 + 3~4자리 + 하이픈 + 4자리
+            // 예: 02-123-4567, 02-1234-5678, 031-123-4567, 010-1234-5678
+            return Regex.IsMatch(Phone, @"^(02|0\d{2})-\d{3,4}-\d{4}$");
+        }
+
+        /// <summary>
+        /// 휴대폰 번호(대한민국) 하이픈 포함 형식 검사
+        /// 예: 010-1234-5678, 011-123-4567
+        /// </summary>
+        public static bool CheckPhoneNumberKoreaMobileHyphenFormat(this string Phone)
+        {
+            if (string.IsNullOrWhiteSpace(Phone)) return false;
+            return Regex.IsMatch(Phone, @"^01[016789]-\d{3,4}-\d{4}$");
+        }
+        #endregion
+        
         /// <summary>
         /// 
         /// </summary>

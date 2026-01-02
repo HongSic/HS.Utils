@@ -449,7 +449,7 @@ namespace HS.Utils.Text
             if (string.IsNullOrWhiteSpace(Phone)) return false;
 
             // 공백 제거
-            var normalized = Phone.Replace(" ", "");
+            var normalized = Regex.Replace(Phone, @"[\s\-]", "");
 
             // E.164 기반: +국가코드 + 숫자 (최소 8자리 ~ 최대 15자리)
             return Regex.IsMatch(normalized, @"^\+[1-9]\d{7,14}$");
@@ -535,6 +535,61 @@ namespace HS.Utils.Text
             }
 
             return true;
+        }
+        #endregion
+
+        #region Nomalizer
+        /// <summary>
+        /// 국제코드 + 한국번호로 노멀라이징 합니다 (반드시 전화번호 형식 확인 후 작업해주세요)
+        /// 예) <br/>
+        /// 010-1234-5678 -> +82 10-1234-5678 <br/>
+        /// +82 1012345678 -> +82 10-1234-5678 <br/>
+        /// +1 1012345678 -> +1 10-1234-5678 <br/>
+        /// </summary>
+        /// <param name="Phone"></param>
+        /// <returns></returns>
+        public static string NormalizeGlobalPhoneNumberKorea(this string Phone)
+        {
+            if (string.IsNullOrWhiteSpace(Phone)) return null;
+
+            // 공백/하이픈 제거 (표시용 포맷으로 재구성할 것이므로 일단 숫자만 남기기)
+            var raw = Regex.Replace(Phone, @"[\s\-]", "").Trim();
+
+            // 국제번호: +<country><digits>
+            if (raw.StartsWith("+"))
+            {
+                // 국가코드(1~3자리) + 나머지 번호(최소 8자리)
+                // 예: +821012345678, +11012345678
+                var match = Regex.Match(raw, @"^(\+[1-9]\d{0,2})(\d{8,15})$");
+                if (!match.Success) return null;
+
+                var country = match.Groups[1].Value; // +82, +1 등
+                var number = match.Groups[2].Value;  // 나머지 숫자
+
+                if (number.Length < 8) return null;
+
+                // 뒤 8자리는 xxxx-xxxx 로 고정
+                var mid = number.Substring(number.Length - 8, 4);
+                var tail = number.Substring(number.Length - 4, 4);
+                var head = number.Substring(0, number.Length - 8);
+
+                // head가 너무 짧거나 길어도 일단 표시 포맷으로 반환
+                return $"{country} {head}-{mid}-{tail}";
+            }
+
+            // 국내번호(대한민국): 0 + (2 또는 2자리 지역/휴대폰 코드) + (7~8자리)
+            // 예: 01012345678, 0212345678, 0311234567
+            var domestic = Regex.Match(raw, @"^0(2|\d{2})(\d{7,8})$");
+            if (!domestic.Success) return null;
+
+            var area = domestic.Groups[1].Value; // 2, 10, 31 등 (앞의 0 제거된 값)
+            var rest = domestic.Groups[2].Value; // 7~8자리
+
+            // 가운데 자리: 7자리면 3-4, 8자리면 4-4
+            var mid2 = rest.Length == 8 ? rest.Substring(0, 4) : rest.Substring(0, 3);
+            var tail2 = rest.Length == 8 ? rest.Substring(4, 4) : rest.Substring(3, 4);
+
+            return $"+82 {area}-{mid2}-{tail2}";
         }
         #endregion
 

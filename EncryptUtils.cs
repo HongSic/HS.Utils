@@ -114,6 +114,11 @@ namespace HS.Utils
         public static byte[] DecryptDataAES(this byte[] EncryptedData, string Password) { return _DecryptDataAES(EncryptedData, Password, null); }
         public static byte[] DecryptDataAES(this byte[] EncryptedData, string Password, string Salt) { return _DecryptDataAES(EncryptedData, Password, UTF8Array(Salt)); }
         public static byte[] DecryptDataAES(this byte[] EncryptedData, string Password, byte[] Salt) { return _DecryptDataAES(EncryptedData, Password, Salt); }
+        
+        public static bool TryDecryptDataAES(this byte[] EncryptedData, string Password, out byte[] Data) { return _TryDecryptDataAES(EncryptedData, Password, null, out Data); }
+        public static bool TryDecryptDataAES(this byte[] EncryptedData, string Password, string Salt, out byte[] Data) { return _TryDecryptDataAES(EncryptedData, Password, UTF8Array(Salt), out Data); }
+        public static bool TryDecryptDataAES(this byte[] EncryptedData, string Password, byte[] Salt, out byte[] Data) { return _TryDecryptDataAES(EncryptedData, Password, Salt, out Data); }
+        
         private static byte[] _DecryptDataAES(this byte[] EncryptedData, string Password, byte[] Salt)
         {
             using (var outmemory = new MemoryStream())
@@ -141,11 +146,21 @@ namespace HS.Utils
                 return outmemory.ToArray();
             }
         }
+        private static bool _TryDecryptDataAES(this byte[] EncryptedData, string Password, byte[] Salt, out byte[] Data)
+        {
+            Data = null;
+            try
+            {
+                Data = _DecryptDataAES(EncryptedData, Password, Salt);
+                return true;
+            }
+            catch { return false;}
+        }
         #endregion
 
         #region Encrypt / Decrypt AES String
         public static string EncryptToBase64AES(this string Text, string Password) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password), Base64FormattingOptions.None); }
-        public static string EncryptBase64AES(this string Text, string Password, string Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.None); }
+        public static string EncryptToBase64AES(this string Text, string Password, string Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.None); }
         public static string EncryptToBase64AES(this string Text, string Password, byte[] Salt) { return System.Convert.ToBase64String(EncryptStringAES(Text, Password, Salt), Base64FormattingOptions.None); }
 
         private static byte[] EncryptStringAES(this string Text, string Password) { return _EncryptStringAES(Text, Password, null); }
@@ -166,9 +181,19 @@ namespace HS.Utils
         public static string DecryptBase64AES(this string EncryptedBase64, string Password, string Salt = null) { return DecryptStringAES(System.Convert.FromBase64String(EncryptedBase64), Password, Salt); }
         public static string DecryptBase64AES(this string EncryptedBase64, string Password, byte[] Salt = null) { return DecryptStringAES(System.Convert.FromBase64String(EncryptedBase64), Password, Salt); }
 
+        public static bool TryDecryptBase64AES(this string EncryptedBase64, string Password, out string Text) { return TryDecryptStringAES(System.Convert.FromBase64String(EncryptedBase64), Password, out Text); }
+        public static bool TryDecryptBase64AES(this string EncryptedBase64, string Password, string Salt, out string Text) { return TryDecryptStringAES(System.Convert.FromBase64String(EncryptedBase64), Password, Salt, out Text); }
+        public static bool TryDecryptBase64AES(this string EncryptedBase64, string Password, byte[] Salt, out string Text) { return TryDecryptStringAES(System.Convert.FromBase64String(EncryptedBase64), Password, Salt, out Text); }
+        
         public static string DecryptStringAES(this byte[] EncryptedData, string Password) { return _DecryptStringAES(EncryptedData, Password, null); }
         public static string DecryptStringAES(this byte[] EncryptedData, string Password, string Salt) { return _DecryptStringAES(EncryptedData, Password, UTF8Array(Salt)); }
         public static string DecryptStringAES(this byte[] EncryptedData, string Password, byte[] Salt) { return _DecryptStringAES(EncryptedData, Password, Salt); }
+        
+        public static bool TryDecryptStringAES(this byte[] EncryptedData, string Password, out string Text) { return _TryDecryptStringAES(EncryptedData, Password, null, out Text); }
+        public static bool TryDecryptStringAES(this byte[] EncryptedData, string Password, string Salt, out string Text) { return _TryDecryptStringAES(EncryptedData, Password, UTF8Array(Salt), out Text); }
+        public static bool TryDecryptStringAES(this byte[] EncryptedData, string Password, byte[] Salt, out string Text) { return _TryDecryptStringAES(EncryptedData, Password, Salt, out Text); }
+
+        
         private static string _DecryptStringAES(this byte[] EncryptedData, string Password, byte[] Salt)
         {
             if(EncryptedData.Length == 0) return null;
@@ -179,6 +204,26 @@ namespace HS.Utils
             var data = DecryptDataAES(EncryptedData, Password, Salt);
             // 복호화된 데이터를 문자열로 바꾼다.
             return data == null || data.Length == 0 ? null : Encoding.UTF8.GetString(data);
+        }
+        private static bool _TryDecryptStringAES(this byte[] EncryptedData, string Password, byte[] Salt, out string Text)
+        {
+            Text = null;
+
+            if (EncryptedData.Length > 0)
+            {
+                // 딕셔너리 공격을 대비해서 키를 더 풀기 어렵게 만들기 위해서 
+                // Salt를 사용한다.
+
+                // 복호화 시작
+                byte[] data;
+                if (TryDecryptDataAES(EncryptedData, Password, Salt, out data))
+                {
+                    Text = Encoding.UTF8.GetString(data);
+                    return true;
+                }
+            }
+            
+            return false;
         }
         #endregion
         #endregion

@@ -1,4 +1,4 @@
-﻿using HS.Utils.Text;
+using HS.Utils.Text;
 using System;
 using System.Collections.Generic;
 

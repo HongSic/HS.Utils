@@ -1,4 +1,4 @@
-﻿namespace HS.Utils.Web.Http
+namespace HS.Utils.Web.Http
 {
     //https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
     public static class HttpHeaderKind
